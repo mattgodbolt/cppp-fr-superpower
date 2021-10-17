@@ -19,11 +19,182 @@
 <div class="reveal">
     <div class="slides">
         <section>
-            <h2>C++'s Superpower</h2>
-        </section>
-        <section>
+            <!-- INTRO -->
             <section>
+                <h2>C++'s Superpower</h2>
+                <h4>Matt Godbolt &mdash; <a href="https://twitter.com/mattgodbolt">@mattgodbolt</a></h4>
+                <h6><a href="https://cppp.fr">cppp.fr</a> December 2021</h6>
             </section>
+            <section>
+                <h2>What is a superpower?</h2>
+                <dl class="fragment">
+                    <dt>Superpower</dt>
+                    <dd>A state with a dominant position characterized by its extensive ability to exert influence or
+                        project power on a global scale.
+                    </dd>
+                </dl>
+                <aside class="notes">
+                    A superpower is something which nobody else possesses.
+                </aside>
+            </section>
+            <section>
+                <h2>C++'s Superpower</h2>
+                <div>TODO: IMAGE OF SUPERMAN LOGO WITH C++ INSTEAD</div>
+            </section>
+            <section>
+                <h2>What could it be?</h2>
+                <ul>
+                    <li>Multi-paradigm</li>
+                    <li>TODO more</li>
+                </ul>
+            </section>
+            <section>
+                <h2>What could it be?</h2>
+                <ul>
+                    <li>Wrong defaults</li>
+                    <li>Legacy</li>
+                    <li>Undefined behaviour</li>
+                    <li>TODO more</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Backwards compatibility!</h2>
+            </section>
+        </section>
+
+        <section>
+            <!-- back story -->
+            <section>
+                <h2>Backstory</h2>
+            </section>
+            <section>
+                <h2>History</h2>
+                <ul>
+                    <li>80s to early 90s - 6502 and ARM assembly</li>
+                    <li>1994 discovered C</li>
+                    <li>1997 started writing C++</li>
+                    <li>...</li>
+                    <li>2020 rediscoverd 1995-era code...</li>
+                </ul>
+            </section>
+            <section>
+                <h2>What is a MUD?</h2>
+                <ul>
+                    <li>Dungeons &amp; Dragons</li>
+                    <li>Multiplayer</li>
+                    <li>Raw TCP clients</li>
+                </ul>
+            </section>
+            <section>
+                <h2>What is a MUD?</h2>
+                <div>A giant text processor</div>
+                taking user input! classic c code strong suit...er..
+            </section>
+            <section>
+                <h2>The goal</h2>
+                <ul>
+                    <li>Take 90s-era C</li>
+                    <li>Port to modern C++17 (C++20?)</li>
+                    <li>Incrementally!</li>
+                </ul>
+            </section>
+        </section>
+
+        <section>
+            <!-- The beginning -->
+            <section>
+                <h2>Groundwork</h2>
+                <ul>
+                    <li><code>cmake</code></li>
+                    <li><code>git</code></li>
+                    <li><code>-Wall -Wextra</code></li>
+                    <li><code>clang-format</code></li>
+                    <li><a href="https://conan.io">conan</a></li>
+                </ul>
+            </section>
+            <section>
+                <h2>The most important thing</h2>
+                <ul>
+                    <li>Manual tests (to begin with)</li>
+                    <li>Tests! Catch2</li>
+                </ul>
+            </section>
+            <section>
+                <h2>The C++ification</h2>
+                <pre><code data-trim>
+                $ rename .c .cpp *.c
+                $ rename .h .hpp *.h
+                </code></pre>
+            </section>
+            <section>
+                <h2>overlap</h2>
+                <div>TODO venn diagram of D&amp;D vs C++, and string formatting showing class and template</div>
+            </section>
+        </section>
+
+        <section>
+            <!-- elementwise changes -->
+            <!-- todo ghetto change -->
+            <section data-auto-animate>
+                <h2>Changing an element</h2>
+                <pre data-auto-animate-id="code"><code data-trim data-noescape>
+struct AREA_DATA {
+    <span data-auto-animate-id="changing">const char *name;</span>
+    const char *areaname;
+    const char *filename;
+    // ...
+};
+                </code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>Changing an element</h2>
+                <pre data-auto-animate-id="code"><code data-trim data-noescape>
+struct AREA_DATA {
+    <span data-auto-animate-id="changing">std::string name;</span>
+    const char *areaname;
+    const char *filename;
+    // ...
+};
+                </code></pre>
+            </section>
+            <section>
+                eventually class AreaData() with a constructor...
+            </section>
+        </section>
+
+        <section>
+            <!-- fmt changes -->
+        </section>
+
+        <section>
+            <!-- range goodness -->
+            <section>
+                <ul>
+                    <li>string manipulation functions</li>
+                    <li>show evolution of initial_caps_only (also code gen!)
+                        - original
+                        - mutable range
+                        - (not checked in)
+                        <pre><code>std::string initial_caps_only(std::string_view text) {
+    return text | ranges::view::enumerate | ranges::view::transform([](const auto &pair) {
+               return pair.first == 0 ? toupper(pair.second) : tolower(pair.second);
+           })
+           | ranges::&lt;std::string&gt;
+}</code></pre>
+                        - final
+                        <pre><code>std::string initial_caps_only(std::string_view text) {
+    return ranges::view::concat(text | ranges::view::take(1) | ranges::view::transform(toupper),
+                                text | ranges::view::drop(1) | ranges::view::transform(tolower))
+           | ranges::to&lt;std::string&gt;;
+}</code></pre>
+                    </li>
+                    <li>Show joyous matches_inside implementation</li>
+                </ul>
+            </section>
+        </section>
+
+        <section>
+            fuzz testing?
         </section>
     </div>
 </div>
