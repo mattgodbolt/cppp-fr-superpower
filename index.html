@@ -158,12 +158,20 @@ struct AREA_DATA {
                 </code></pre>
             </section>
             <section>
-                eventually class AreaData() with a constructor...
+                eventually <code>class Area</code> with a constructor...
             </section>
         </section>
 
         <section>
             <!-- fmt changes -->
+            so much of the code is manipulating strings. lots of "template" strings in data,
+            lots of printf-style things.
+            galaxy brain meme? printf, annotated printf, fmt!
+            1. annotate the printf things with gcc things to treat as such
+            2. fix bugs
+            3. start replacing functions with ones returning string
+            4. add equivalent fmt ones
+            5. slowly switch over
         </section>
 
         <section>
@@ -194,7 +202,22 @@ struct AREA_DATA {
         </section>
 
         <section>
+            Adding pronouns?
+        </section>
+
+        <section>
             fuzz testing?
+        </section>
+
+        <section>
+            <h3>Conclusion</h3>
+            <aside class="notes">
+                <ul>
+                    <li>want people to realise that some things in C++ are that way because of back compat</li>
+                    <li>while often annoying backpat lets folks do this!</li>
+                    <li>not so important for some never-used code like xania, but</li>
+                </ul>
+            </aside>
         </section>
     </div>
 </div>
