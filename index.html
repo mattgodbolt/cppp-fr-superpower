@@ -12,6 +12,13 @@
 
     <link rel="stylesheet" href="reveal.js/plugin/highlight/monokai.css">
     <style>
+        div.col2 {
+            display: flex;
+        }
+
+        div.col2 > div {
+            flex: 1;
+        }
     </style>
 </head>
 <body>
@@ -114,10 +121,11 @@
             <section>
                 <h2>Groundwork</h2>
                 <ul>
-                    <li><code>cmake</code></li>
                     <li><code>git</code></li>
+                    <li><code>cmake</code></li>
                     <li><code>-Wall -Wextra</code></li>
                     <li><code>clang-format</code></li>
+                    <li><code>-fsanitize=...</code></li>
                     <li><a href="https://conan.io">conan</a></li>
                 </ul>
             </section>
@@ -142,32 +150,221 @@
         </section>
 
         <section>
-            <!-- elementwise changes -->
-            <!-- todo ghetto change -->
+            <!-- incremental updates -->
             <section data-auto-animate>
-                <h2>Changing an element</h2>
-                <pre data-auto-animate-id="code"><code data-trim data-noescape>
-struct AREA_DATA {
-    <span data-auto-animate-id="changing">const char *name;</span>
-    const char *areaname;
-    const char *filename;
-    // ...
+                <h2>How to improve?</h2>
+                <pre data-auto-animate-id="code"><code data-trim data-noescape class="cpp">
+struct area_data {
+  AREA_DATA *next;
+  char *name;
+  sh_int age;
+  sh_int nplayer;
+  bool empty;
+  char *areaname;
+  char *filename;
+  int lvnum;
+  int uvnum;
+  int vnum;
 };
-                </code></pre>
+
+typedef struct area_data AREA_DATA;
+AREA_DATA *areas;</code></pre>
             </section>
-            <section data-auto-animate>
-                <h2>Changing an element</h2>
-                <pre data-auto-animate-id="code"><code data-trim data-noescape>
-struct AREA_DATA {
-    <span data-auto-animate-id="changing">std::string name;</span>
-    const char *areaname;
-    const char *filename;
-    // ...
+            <section data-auto-animate="">
+                <h2>How to improve?</h2>
+                <div class="col2">
+                    <div>
+                        <pre data-auto-animate-id="code"><code data-trim data-noescape class="cpp">
+struct area_data {
+  AREA_DATA *next;  <span class="fragment" data-fragment-index="1">// hand-rolled</span>
+  char *name;       <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
+                                                                                        data-fragment-index="3">, c-style</span>
+  sh_int age;
+  sh_int nplayer;
+  bool empty;
+  char *areaname;   <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
+                                                                                        data-fragment-index="3">, c-style</span>
+  char *filename;   <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
+                                                                                        data-fragment-index="3">, c-style</span>
+  int lvnum;
+  int uvnum;
+  int vnum;
 };
-                </code></pre>
+<span class="fragment" data-fragment-index="4">// Unnecessary!</span>
+typedef struct area_data AREA_DATA;
+AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Global!</span>
+</code></pre>
+                    </div>
+                    <div>
+                        <ul>
+                            <li class="fragment" data-fragment-index="1">Hand-rolled linked list</li>
+                            <li class="fragment" data-fragment-index="2">Not <code>const</code> correct</li>
+                            <li class="fragment" data-fragment-index="3">C-style strings!</li>
+                            <li class="fragment" data-fragment-index="4">Unnecessary <code>typedef</code></li>
+                            <li class="fragment" data-fragment-index="5">Global!</li>
+                            <li class="fragment">Encapsulation, <code>class</code></li>
+                        </ul>
+                    </div>
+                </div>
             </section>
             <section>
-                eventually <code>class Area</code> with a constructor...
+                <h2>Simple fix</h2>
+                <div class="col2">
+                    <div><pre><code data-trim data-noescape class="cpp">
+struct area_data {
+  AREA_DATA *next;
+  // ...
+};
+typedef struct area_data AREA_DATA;
+                    </code></pre>
+                    </div>
+                    <div><pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  AREA_DATA *next;
+  // ...
+};
+                    </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <div class="col2">
+                    <div><pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  AREA_DATA *next;
+  char *name;         // <---
+  char *areaname;
+  char *filename;
+  // ...
+};
+                </code></pre>
+                    </div>
+                    <div><pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  AREA_DATA *next;
+  std::string name;   // <---
+  char *areaname;
+  char *filename;
+  // ...
+};
+                </code></pre>
+                    </div>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <h5>Compile errors...</h5>
+                <ul>
+                    <li>Assignment</li>
+                    <li><code>.c_str()</code></li>
+                    <li><code>snprintf</code> warnings...</li>
+                    <li><code>__attribute__((format(printf, 2, 3)</code></li>
+                    <li>Sanitizer!</li>
+                    <li>Testing is just run the app</li>
+                </ul>
+            </section>
+            <section>
+                <h2>So now...</h2>
+                <div>
+                    <pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  AREA_DATA *next;
+  std::string name;
+  std::string areaname;
+  std::string filename;
+  // ...
+};
+                    </code></pre>
+                </div>
+            </section>
+            <section>
+                <h2>Replace linked-list with STL</h2>
+                pointer stability, vector of unique ptr
+            </section>
+            <section>
+                <h2>So now...</h2>
+                <div>
+                    <pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  std::string name;
+  std::string areaname;
+  std::string filename;
+  // ...
+};
+
+std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas; // still global
+                    </code></pre>
+                </div>
+            </section>
+            <section>
+                <h2>Class-i-fy</h2>
+                <ul>
+                    <li>struct->class but public:</li>
+                    <li>move each inside, build test</li>
+                    <li>accessor functions</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Class-i-fy</h2>
+                <ul>
+                    <li>Start moving functionality</li>
+                    <li>AREA *load_area -> Area::parse</li>
+                    <li>Start writing tests!</li>
+                </ul>
+            </section>
+            <section>
+                <h2>Class-i-fied</h2>
+                <div class="col2">
+                    <div><pre><code data-trim data-noescape class="cpp">
+class Area {
+  std::string description_;
+  ush_int num_players_{};
+  bool empty_since_last_reset_{};
+  int min_level_{0};
+  int max_level_{MAX_LEVEL};
+  std::string short_name_;
+
+  Area() = default;
+  void reset();
+                </code></pre>
+                    </div>
+                    <div><pre><code data-trim data-noescape class="cpp">
+public:
+  static Area parse(
+    FILE *fp,
+    std::string filename);
+
+  void player_entered();
+  void player_left();
+  void update();
+
+  [[nodiscard]]
+  const auto &short_name() const {
+    return short_name_;
+  }
+  // etc...
+};
+                </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>Test</h2>
+                <pre><code data-trim data-noescape class="cpp">
+TEST_CASE("area loading") {
+  test::MemFile fp(R"(ignored~
+Short name~
+{ 1 50} TheMoog Some kind of area~
+6200 6399
+)");
+  auto area = Area::parse(fp.file(), "bob");
+  CHECK(area.filename() == "bob");
+  CHECK(area.short_name() == "Short name");
+  CHECK(area.description() == "{ 1 50} TheMoog Some kind of area");
+  CHECK(area.min_level() == 1);
+  CHECK(area.max_level() == 50);
+}
+                </code></pre>
             </section>
         </section>
 
@@ -220,10 +417,6 @@ struct AREA_DATA {
 
         <section>
             Adding pronouns?
-        </section>
-
-        <section>
-            fuzz testing?
         </section>
 
         <section>

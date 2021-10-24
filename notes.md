@@ -45,6 +45,9 @@ What do I want folks to get from this talk?
 * I need some codebase to show this. Something I understand well, something that's open source, something that's been
   around a while.
 * Let's bring it up to date to at least C++17, using new and cool features and libraries available.
+
+----
+
 * Xania! MUD from the mid-90s
 * Backstory time, Exeter Uni, Physics, housemates and I played a lot of MUDs
 * What is a MUD?
@@ -61,6 +64,8 @@ What do I want folks to get from this talk?
     * make small changes
     * be able to keep running at each step
     * increase confidence nothing's broken as we go
+
+----
 * PREP WORK
 * cmakify, git, wall extra rename
     * "What C isn't valid C++"
@@ -68,6 +73,8 @@ What do I want folks to get from this talk?
     * `class`, `template`
 * sanitizers
 * Where to start?
+
+----
 * Memory management!
 * Lots of strings copied all over the place!
 * Let's start with a single field
@@ -75,11 +82,19 @@ What do I want folks to get from this talk?
 * sanitizers
 * Leaving some noise, TODOs in the code, attributed, to come back to
     * things needing mutable strings? const char
+* unique_ptr, gsl stuff?
+
+----
+
+* String formatting and manipulation
+* fmt :allthethings:
+* fmt and ranges
+* intro testing here?
 
 MORE NOTE FORM
-
-* Section: string formatting and manipulation
-    * intro testing here?
+* Section: strong types?
+    * enum stuff
+    * std array of things - all naked arrays gone
 * Section: class-i-fication
     * collating functions
     * hiding members away
@@ -90,6 +105,8 @@ MORE NOTE FORM
 * Some stats
 * Reiterate goals
 * THE FUTURE
+    * C++20
+    * fuzzing
     * epochs not a thing, but maybe there's a solution
     * BUT just remember not all languages get to do this!
 
