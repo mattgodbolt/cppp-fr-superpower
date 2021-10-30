@@ -63,48 +63,35 @@
                 <h6><a href="https://cppp.fr">cppp.fr</a> December 2021</h6>
             </section>
             <section>
-                Before we talk about super powers?
-                What's the worst thing about C++?
-            </section>
-            <section>
-                <h2>What is a superpower?</h2>
-                <dl class="fragment">
-                    <dt>Superpower</dt>
-                    <dd>A state with a dominant position characterized by its extensive ability to exert influence or
-                        project power on a global scale.
-                    </dd>
-                </dl>
-                <aside class="notes">
-                    A superpower is something which nobody else possesses.
-                </aside>
-            </section>
-            <section>
                 <h2>C++'s Superpower</h2>
                 <div>TODO: IMAGE OF SUPERMAN LOGO WITH C++ INSTEAD</div>
             </section>
             <section>
                 <h2>What could it be?</h2>
                 <ul>
+                    <li>Ubiquity</li>
+                    <li>Performance</li>
                     <li>Multi-paradigm</li>
-                    <li>TODO more</li>
                 </ul>
             </section>
             <section>
                 <h2>What could it be?</h2>
                 <ul>
                     <li>Wrong defaults</li>
-                    <li>Legacy</li>
+                    <li>Legacy support</li>
                     <li>Undefined behaviour</li>
-                    <li>TODO more</li>
                 </ul>
             </section>
             <section>
                 <h2>Backwards compatibility!</h2>
             </section>
             <section>
-                Maybe for the conclusion slides?
-                even talk about how Compiler Explorer came about partially as moving forward incrementally wilhe keeping
-                backwards compat with a trading system?
+                <h2>The goal</h2>
+                <ul>
+                    <li>Take 90s-era C</li>
+                    <li>Port to modern C++17</li>
+                    <li class="fragment">...Incrementally!</li>
+                </ul>
             </section>
         </section>
 
@@ -115,13 +102,28 @@
             </section>
             <section>
                 <h2>History</h2>
-                <ul>
-                    <li>80s to early 90s - 6502 and ARM assembly</li>
-                    <li>1994 discovered C</li>
-                    <li>1997 started writing C++</li>
-                    <li>...</li>
-                    <li>2020 rediscovered 1995-era code...</li>
-                </ul>
+                <div class="col2">
+                    <div>
+                        <ul>
+                            <li>80s to early 90s - 6502 and ARM assembly</li>
+                            <li class="fragment" data-fragment-index="1">1994 discovered C</li>
+                            <li class="fragment">1997 started writing C++</li>
+                            <li class="fragment">2020 rediscovered 1995-era code...</li>
+                        </ul>
+                    </div>
+                    <div><img src="images/Matt1994.jpeg" alt="zomg" class="stretch fragment" data-fragment-index="1">
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>Xania</h2>
+                <div class="col2 stretch">
+                    <div><img src="images/Xania.png" alt="old websites, amirite?"></div>
+                    <div><img src="images/xania-play.png" alt="xania in play"></div>
+                </div>
+                <aside class="notes">
+                    Xania is one of the main reasons I graduated with a pretty poor Physics degrees.
+                </aside>
             </section>
             <section>
                 <h2>What is a MUD?</h2>
@@ -133,16 +135,10 @@
             </section>
             <section>
                 <h2>What is a MUD?</h2>
-                <div>A giant text processor</div>
-                taking user input! classic c code strong suit...er..
-            </section>
-            <section>
-                <h2>The goal</h2>
-                <ul>
-                    <li>Take 90s-era C</li>
-                    <li>Port to modern C++17 (C++20?)</li>
-                    <li>Incrementally!</li>
-                </ul>
+                <div>A giant text processor!</div>
+                <aside class="notes">
+                    taking user input! classic c code strong suit...er..
+                </aside>
             </section>
         </section>
 
@@ -150,9 +146,42 @@
             <!-- The beginning -->
             <section>
                 <h2>Groundwork</h2>
+                <img class="stretch" src="images/old_hds.jpeg" alt="pile of old HDs">
+            </section>
+            <section>
+                <h2>Groundwork</h2>
+                <table>
+                    <tr>
+                        <th>Language</th>
+                        <th>Files</th>
+                        <th>Comments</th>
+                        <th>Lines of Code</th>
+                    </tr>
+                    <tr>
+                        <td>C</td>
+                        <td>67</td>
+                        <td>4524</td>
+                        <td>50977</td>
+                    </tr>
+                     <tr>
+                        <td>C++</td>
+                        <td>6</td>
+                        <td>54</td>
+                        <td>699</td>
+                    </tr>
+                    <tr>
+                        <td>Perl/make</td>
+                        <td>8</td>
+                        <td>180</td>
+                        <td>717</td>
+                    </tr>
+                </table>
+            </section>
+            <section>
+                <h2>Groundwork</h2>
                 <ul>
                     <li><code>git</code></li>
-                    <li><code>cmake</code></li>
+                    <li><code>CMake</code></li>
                     <li><code>-Wall -Wextra</code></li>
                     <li><code>clang-format</code></li>
                     <li><code>-fsanitize=...</code></li>
@@ -280,6 +309,7 @@ struct AREA_DATA {
 };
                 </code></pre>
                     </div>
+                </div>
             </section>
             <section>
                 <h2>Changing an element</h2>
@@ -641,7 +671,7 @@ ch->send_line(
                 <h2>String formatting</h2>
                 <table class="galaxy">
                     <tr class="fragment">
-                        <td class="word"><code>sprintf()</code></code></td>
+                        <td class="word"><code>sprintf()</code></td>
                         <td><img src="images/galaxy1.jpeg" alt="galaxy 1"></td>
                     </tr>
                     <tr class="fragment">
@@ -661,24 +691,40 @@ ch->send_line(
         </section>
 
         <section>
-            Strong types
+            Strong types, bit fields
         </section>
 
         <section>
-            Bit fields?
-        </section>
-
-        <section>
+            MUD input
             interim solutions
             naked function -> std::function<>
             overloads; lambdas to make transition easier
             incremental update!
-            ArgParser <->
-            overloads!
+            ArgParser <-> cosnt char *
+
+        </section>
+
+        <section>
+            New functionality! Traditional testing, mocking etc
+            STill todo - unglobalisation
+            Started singleton-ing things, still a ways to go
+            One "Mud" class needed?
+            Fuzzing!
+            C++20
+        </section>
+
+        <section>
+            Maybe for the conclusion slides?
+            even talk about how Compiler Explorer came about partially as moving forward incrementally wilhe keeping
+            backwards compat with a trading system?
         </section>
 
         <section>
             <h3>Conclusion</h3>
+            <ul>
+                <li>Epochs?</li>
+                <li>"Privilege"</li>
+            </ul>
             <aside class="notes">
                 <ul>
                     <li>want people to realise that some things in C++ are that way because of back compat</li>
