@@ -190,22 +190,50 @@
             </section>
             <section>
                 <h2>The most important thing</h2>
-                <ul>
-                    <li>Manual tests (to begin with)</li>
-                    <li>Tests! Catch2</li>
-                </ul>
+                <h4>Do no harm!</h4>
             </section>
             <section>
-                <h2>The C++ification</h2>
+                <h2>The C++-i-fication</h2>
                 <pre><code data-trim>
                 $ rename .c .cpp *.c
                 $ rename .h .hpp *.h
+                $ ninja
+                ...
+                </code></pre>
+            </section>
+            <section>
+                <h2>Pop quiz!</h2>
+            </section>
+            <section>
+                <h2>Pop quiz!</h2>
+                <div><pre><code data-trim data-noescape class="cpp">
+                #define CLASS_MAGE 0
+                #define CLASS_CLERIC 1
+                // etc...
+                struct char_data {
+                  // ...
+                  int class;   /* what class this character is */
+                  // ...
+                };
+
+                // ...
+                /* Display the current flags */
+                void display_flags (char *template, CHAR_DATA *ch, int current_val);
                 </code></pre>
             </section>
             <section>
                 <h2>overlap</h2>
                 <div>TODO venn diagram of D&amp;D vs C++, and string formatting showing class and template</div>
             </section>
+        </section>
+
+        <section>
+            <h2>Process</h2>
+            <ul>
+                <li>Small change</li>
+                <li>Test</li>
+                <li>Leave TODOs</li>
+            </ul>
         </section>
 
         <section>
