@@ -19,6 +19,36 @@
         div.col2 > div {
             flex: 1;
         }
+
+        table.galaxy {
+            background: white;
+            border: none;
+            color: black;
+            border-collapse: collapse;
+            padding: 0;
+        }
+
+        table.galaxy tr {
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        table.galaxy td {
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+
+        table.galaxy td.word {
+            padding: 10px;
+            vertical-align: middle;
+        }
+
+        table.galaxy img {
+            margin: 0;
+            padding: 0;
+        }
     </style>
 </head>
 <body>
@@ -155,7 +185,7 @@
                 <h2>How to improve?</h2>
                 <pre data-auto-animate-id="code"><code data-trim data-noescape class="cpp">
 struct area_data {
-  AREA_DATA *next;
+  struct area_data *next;
   char *name;
   sh_int age;
   sh_int nplayer;
@@ -176,7 +206,7 @@ AREA_DATA *areas;</code></pre>
                     <div>
                         <pre data-auto-animate-id="code"><code data-trim data-noescape class="cpp">
 struct area_data {
-  AREA_DATA *next;  <span class="fragment" data-fragment-index="1">// hand-rolled</span>
+  struct area_data *next;<span class="fragment" data-fragment-index="1">// hand-rolled</span>
   char *name;       <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
                                                                                         data-fragment-index="3">, c-style</span>
   sh_int age;
@@ -212,7 +242,7 @@ AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Global!</s
                 <div class="col2">
                     <div><pre><code data-trim data-noescape class="cpp">
 struct area_data {
-  AREA_DATA *next;
+  struct area_data *next;
   // ...
 };
 typedef struct area_data AREA_DATA;
@@ -369,19 +399,146 @@ Short name~
         </section>
 
         <section>
-            <!-- fmt changes -->
-            so much of the code is manipulating strings. lots of "template" strings in data,
-            lots of printf-style things.
-            galaxy brain meme? printf, annotated printf, fmt!
-            1. annotate the printf things with gcc things to treat as such
-            2. fix bugs
-            3. start replacing functions with ones returning string
-            4. add equivalent fmt ones
-            5. slowly switch over
+            <!-- proto range goodness -->
+            <section>
+                <h2>Ranges</h2>
+                <pre><code data-trim data-noescape class="cpp">
+                void Char::yell(std::string_view exclamation) const {
+                  act("|WYou yell '$t|W'|w", this, exclamation, nullptr, To::Char);
+
+                  for (auto &victim : descriptors().all_but(*this)
+                      | DescriptorFilter::same_area(*this)
+                      | DescriptorFilter::to_character()
+                    ) {
+                    act("|W$n yells '$t|W'|w", this, exclamation, &victim, To::Vict);
+                  }
+                }
+                </code></pre>
+            </section>
         </section>
 
         <section>
             <!-- range goodness -->
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+char *capitalize(const char *str) {
+  static char strcap[MAX_STRING_LENGTH];
+  int i;
+
+  for (i = 0; str[i] != '\0'; i++)
+    strcap[i] = LOWER(str[i]);
+  strcap[i] = '\0';
+  strcap[0] = UPPER(strcap[0]);
+  return strcap;
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+SECTION("capitalize") {
+  CHECK(capitalize("a monkey") == "A monkey"s);
+  CHECK(capitalize("A MONKEY") == "A monkey"s);
+  CHECK(capitalize("a MonkeY") == "A monkey"s);
+  CHECK(capitalize("") == ""s);
+  CHECK(capitalize("a") == "A"s);
+  CHECK(capitalize("A") == "A"s);
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+std::string capitalize(const char *str) {
+  std::string result;
+  result.resize(strlen(str));
+  for (int i = 0; i < strlen(str); i++)
+    result[i] = std::tolower(str[i]);
+  result[0] = std::toupper(result[0]);  /// BUG!
+  return result;
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+std::string capitalize(const char *str) {
+  std::string result;
+  std::transform(
+    str, str + strlen(str), std::back_inserter(result),
+    [](char c) -> char { return std::tolower(c); } );
+  if (!result.empty())
+    result[0] = std::toupper(result[0]);
+  return result;
+}
+                </code></pre>
+                <!-- https://godbolt.org/z/Eb3MdTae4 -->
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+auto capitalize(std::string_view text) {
+  return text
+    | ranges::view::enumerate
+    | ranges::view::transform([](const auto &pair) -> char {
+      return pair.first == 0 ? std::toupper(pair.second) : std::tolower(pair.second);
+    })| ranges::to&lt;std::string&gt;;
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+auto capitalize(std::string_view text) {
+  return ranges::view::concat(
+    // NB not std::toupper
+    text | ranges::view::take(1) | ranges::view::transform(toupper),
+    text | ranges::view::drop(1) | ranges::view::transform(tolower)
+  ) | ranges::to&lt;std::string&gt;
+}
+                </code></pre>
+                <!-- https://godbolt.org/z/eKMsvoxnb -->
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <ul>
+                    <li>to uppercase/lowercase</li>
+                    <li>whitespace trimming</li>
+                    <li>case insensitive matches</li>
+                    <li>prefixes/suffixes</li>
+                    <li>parsing</li>
+                </ul>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+bool matches_inside(const char *astr, const char *bstr) {
+    char c0;
+    if ((c0 = LOWER(astr[0])) == '\0')
+        return true;
+
+    int sstr1 = strlen(astr);
+    int sstr2 = strlen(bstr);
+
+    for (int ichar = 0; ichar <= sstr2 - sstr1; ichar++) {
+        if (c0 == LOWER(bstr[ichar]) && has_prefix(astr, bstr + ichar))
+            return true;
+    }
+    return false;
+}
+                </code></pre>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape class="cpp">
+bool matches_inside(std::string_view needle, std::string_view haystack) {
+  auto needle_low = needle | ranges::views::transform(tolower);
+  auto haystack_low = haystack | ranges::views::transform(tolower);
+  return !ranges::search(haystack_low, needle_low).empty();
+}
+                </code></pre>
+            </section>
             <section>
                 <ul>
                     <li>string manipulation functions</li>
@@ -393,7 +550,7 @@ Short name~
     return text | ranges::view::enumerate | ranges::view::transform([](const auto &pair) {
                return pair.first == 0 ? toupper(pair.second) : tolower(pair.second);
            })
-           | ranges::&lt;std::string&gt;
+           | ranges::to&lt;std::string&gt;;
 }</code></pre>
                         - final
                         <pre><code>std::string initial_caps_only(std::string_view text) {
@@ -404,6 +561,102 @@ Short name~
                     </li>
                     <li>Show joyous matches_inside implementation</li>
                 </ul>
+            </section>
+            <section>std::array? std::all_of etc? std::fill</section>
+        </section>
+
+        <section>
+            <section>
+                <h2>String formatting</h2>
+                <pre><code data-noescape, data-trim class="c++">
+char buf[MAX_STRING_LENGTH];
+sprintf(buf, "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+send_to_player(ch, buf);
+</code></pre>
+            </section>
+            <section>
+                <h2>String formatting</h2>
+                <pre><code data-noescape, data-trim class="c++">
+char buf[MAX_STRING_LENGTH];
+snprintf(buf, sizeof(buf),
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+send_to_player(ch, buf);
+</code></pre>
+            </section>
+            <section>
+                <h2>String formatting</h2>
+                <pre><code data-noescape, data-trim class="c++">
+extern void send_to_player(CHAR *ch, const char *fmt, ...);
+
+send_to_player(ch,
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+</code></pre>
+            </section>
+            <section>
+                <h2>String formatting</h2>
+                <pre><code data-noescape, data-trim class="c++">
+extern void send_to_player(CHAR *ch, const char *fmt, ...)
+    __attribute__((format(printf, 2, 3)));
+
+send_to_player(ch,
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+</code></pre>
+            </section>
+            <section>
+                <h2>String formatting</h2>
+                <pre><code data-noescape, data-trim class="c++">
+send_to_player(ch,
+  "Your gain is: {}/{} hp, {}/{} m, {}/{} mv {}/{} prac.",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+</code></pre>
+            </section>
+            <section>
+                <h2>String formatting</h2>
+                <pre><code data-noescape, data-trim class="c++">
+ch->send_line(
+  "You can train: {}.",
+  fmt::join(
+    ranges::views::concat(
+      all_stats | ranges::views::filter([&](auto stat) {
+        return ch->perm_stat[stat] < get_max_train(ch, stat);
+      }) | ranges::views::transform(to_short_string),
+      always_trainable
+    ),
+    " "sv
+  )
+);
+
+</code></pre>
+            </section>
+            <section>
+                <h2>String formatting</h2>
+                <table class="galaxy">
+                    <tr class="fragment">
+                        <td class="word"><code>sprintf()</code></code></td>
+                        <td><img src="images/galaxy1.jpeg" alt="galaxy 1"></td>
+                    </tr>
+                    <tr class="fragment">
+                        <td class="word"><code>snprintf()</code></td>
+                        <td><img src="images/galaxy2.jpeg" alt="galaxy 2"></td>
+                    </tr>
+                    <tr class="fragment">
+                        <td class="word"><code>__attribute__((format(printf,2,3)))</code></td>
+                        <td><img src="images/galaxy3.jpeg" alt="galaxy 3"></td>
+                    </tr>
+                    <tr class="fragment">
+                        <td class="word"><code>fmt::format()</code></td>
+                        <td><img src="images/galaxy4.jpeg" alt="galaxy 4"></td>
+                    </tr>
+                </table>
             </section>
         </section>
 
@@ -416,7 +669,12 @@ Short name~
         </section>
 
         <section>
-            Adding pronouns?
+            interim solutions
+            naked function -> std::function<>
+            overloads; lambdas to make transition easier
+            incremental update!
+            ArgParser <->
+            overloads!
         </section>
 
         <section>
@@ -424,7 +682,7 @@ Short name~
             <aside class="notes">
                 <ul>
                     <li>want people to realise that some things in C++ are that way because of back compat</li>
-                    <li>while often annoying backpat lets folks do this!</li>
+                    <li>while often annoying backwards compat lets folks do this!</li>
                     <li>not so important for some never-used code like xania, but</li>
                 </ul>
             </aside>
