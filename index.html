@@ -372,27 +372,54 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...)
             </section>
             <section>
                 <h2>Changing an element</h2>
-                <pre><code>
-==1090996==ERROR: LeakSanitizer: detected memory leaks
+                <pre style="background: #000;">
+<span style="color: #CC0000; "><b>==1090996==ERROR: LeakSanitizer: detected memory leaks</b></span>
 
-Direct leak of 10 byte(s) in 1 object(s) allocated from:
+<span style="color: #3465A4; "><b>Direct leak of 10 byte(s) in 1 object(s) allocated from:</b></span>
  #0 in __interceptor_strdup (./xania/out/debug/bin/xania+0x1c3d017)
  #1 in load_area(_IO_FILE*, char *) ./xania/src/db.cpp:349
  #2 in boot_db() ./xania/src/db.cpp:301
  ...
-                </code></pre>
+                </pre>
             </section>
             <section>
                 <h2>Changing an element</h2>
                 <pre><code class="c++" data-noescape data-trim>
-    pArea->name = strdup(fread_string(fp));
+    pArea->name = str_dup(fread_string(fp));
                 </code></pre>
                 <pre class="fragment"><code class="c++" data-noescape data-trim>
     pArea->name = fread_string(fp);
                 </code></pre>
             </section>
             <section>
-                <h2>So now...</h2>
+                <h2>And so on</h2>
+                <div class="col2">
+                    <div>
+                <pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  // ...
+  std::string name;
+  char *areaname;
+  char *filename;
+  // ...
+};
+                    </code></pre>
+                    </div>
+                    <div>
+                <pre><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  // ...
+  std::string name;
+  std::string areaname;
+  std::string filename;
+  // ...
+};
+                    </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>What's next?</h2>
                 <div>
                     <pre><code data-trim data-noescape class="cpp">
 struct AREA_DATA {
@@ -402,17 +429,60 @@ struct AREA_DATA {
   std::string filename;
   // ...
 };
+
+AREA_DATA *areas;
                     </code></pre>
                 </div>
             </section>
             <section>
-                <h2>Replace linked-list with STL</h2>
-                pointer stability, vector of unique ptr
+                <h2>STL-i-fication</h2>
+                <pre><code data-trim data-noescape class="cpp">
+extern std::vector&lt;AREA_DATA&gt; areas;
+                </code></pre>
             </section>
             <section>
-                <h2>So now...</h2>
+                <h2>STL-i-fication</h2>
                 <div>
-                    <pre><code data-trim data-noescape class="cpp">
+<pre style="background: #000;">
+<span style="color: #CC0000; "><b>ERROR: AddressSanitizer: heap-use-after-free on address</b></span>
+<span style="color: #3465A4; "><b>READ of size 2 at xxx188a2 thread T0</b></span>
+  #0 in reset_room(Room*) ./xania/src/db.cpp:1037
+  #1 in reset_area() ./xania/src/db.cpp:985
+...
+<span style="color: #4E9A06; "><b>xxx188a2 is located 34 bytes inside of 128-byte region [xxx18880,xxx18900)</b></span>
+<span style="color: #75507B; "><b>freed by thread T0 here:</b></span>
+  #0 in operator delete(void*, unsigned long)
+  #1 in __gnu_cxx::new_allocator&lt;Area&gt;::deallocate(Area*, unsigned long)
+  #2 in std::allocator_traits&lt;std::allocator&lt;Area&gt; &gt;::deallocate...
+...
+<span style="color: #75507B; "><b>previously allocated by thread T0 here:</b></span>
+  #0 in operator new(unsigned long)
+  #1 in __gnu_cxx::new_allocator&lt;Area&gt;::allocate(unsigned long, void const*)
+  #2 in std::allocator_traits&lt;std::allocator&lt;Area&gt; &gt;::allocate...
+...
+SUMMARY: heap-use-after-free ./xania/src/db.cpp:1037 in reset_room(Room*)
+</pre>
+                </div>
+            </section>
+            <section>
+                <h2>STL-i-fication</h2>
+                <pre><code data-trim data-noescape class="cpp">
+                struct ROOM_DATA {
+                  //...
+                  AREA_DATA *area;
+                  //...
+                };
+
+                //...
+                if (room->area->nplayer > 0) {
+                  continue;
+                }
+                </code></pre>
+                <h5 class="fragment">Need pointer stability</h5>
+            </section>
+            <section>
+                <h2>STL-i-fication</h2>
+                <pre><code data-trim data-noescape class="cpp">
 struct AREA_DATA {
   std::string name;
   std::string areaname;
@@ -420,9 +490,9 @@ struct AREA_DATA {
   // ...
 };
 
-std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas; // still global
+// TODO(#47): find a way to de-global this.
+std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas;
                     </code></pre>
-                </div>
             </section>
             <section>
                 <h2>Class-i-fy</h2>
@@ -435,9 +505,10 @@ std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas; // still global
             <section>
                 <h2>Class-i-fy</h2>
                 <ul>
-                    <li>Start moving functionality</li>
+                    <li>Move functionality</li>
                     <li>AREA *load_area -> Area::parse</li>
-                    <li>Start writing tests!</li>
+                    <li>Write tests!</li>
+                    <li>Rename fields &amp; accessors</li>
                 </ul>
             </section>
             <section>
@@ -454,10 +525,12 @@ class Area {
 
   Area() = default;
   void reset();
+
+public:
+  // ...continued on next panel -->
                 </code></pre>
                     </div>
                     <div><pre><code data-trim data-noescape class="cpp">
-public:
   static Area parse(
     FILE *fp,
     std::string filename);
@@ -483,14 +556,16 @@ TEST_CASE("area loading") {
   test::MemFile fp(R"(ignored~
 Short name~
 { 1 50} TheMoog Some kind of area~
-6200 6399
-)");
-  auto area = Area::parse(fp.file(), "bob");
-  CHECK(area.filename() == "bob");
-  CHECK(area.short_name() == "Short name");
-  CHECK(area.description() == "{ 1 50} TheMoog Some kind of area");
-  CHECK(area.min_level() == 1);
-  CHECK(area.max_level() == 50);
+6200 6399)");
+
+  SECTION("should parse") {
+    auto area = Area::parse(fp.file(), "bob");
+    CHECK(area.filename() == "bob");
+    CHECK(area.short_name() == "Short name");
+    CHECK(area.description() == "{ 1 50} TheMoog Some kind of area");
+    CHECK(area.min_level() == 1);
+    CHECK(area.max_level() == 50);
+  }
 }
                 </code></pre>
             </section>
@@ -498,6 +573,9 @@ Short name~
 
         <section>
             <!-- proto range goodness -->
+            <section>
+                <h2>Ranges</h2>
+            </section>
             <section>
                 <h2>Ranges</h2>
                 <pre><code data-trim data-noescape class="cpp">
@@ -790,6 +868,9 @@ ch->send_line(
         <section>
             <h3>Conclusion</h3>
             <ul>
+                <li>Compiler warnings</li>
+                <li>Sanitisers</li>
+                <li>TDD-ish</li>
                 <li>Epochs?</li>
                 <li>"Privilege"</li>
             </ul>
