@@ -580,13 +580,13 @@ Short name~
                 <h2>Ranges</h2>
                 <pre><code data-trim data-noescape class="cpp">
                 void Char::yell(std::string_view exclamation) const {
-                  act("|WYou yell '$t|W'|w", this, exclamation, nullptr, To::Char);
+                  send_line("You yell '{}'", exclamation);
 
                   for (auto &victim : descriptors().all_but(*this)
                       | DescriptorFilter::same_area(*this)
                       | DescriptorFilter::to_character()
                     ) {
-                    act("|W$n yells '$t|W'|w", this, exclamation, &victim, To::Vict);
+                    victim.send_line("{} yells '{}'", describe_for(victim), exclamation);
                   }
                 }
                 </code></pre>
@@ -614,14 +614,26 @@ char *capitalize(const char *str) {
                 <h2>String manipulation</h2>
                 <pre><code data-trim data-noescape class="cpp">
 SECTION("capitalize") {
-  CHECK(capitalize("a monkey") == "A monkey"s);
-  CHECK(capitalize("A MONKEY") == "A monkey"s);
-  CHECK(capitalize("a MonkeY") == "A monkey"s);
   CHECK(capitalize("") == ""s);
   CHECK(capitalize("a") == "A"s);
   CHECK(capitalize("A") == "A"s);
+  CHECK(capitalize("a monkey") == "A monkey"s);
+  CHECK(capitalize("A MONKEY") == "A monkey"s);
+  CHECK(capitalize("a MonkeY") == "A monkey"s);
 }
                 </code></pre>
+                <h5 class="fragment">ZOMBIES</h5>
+                <aside class="notes">
+                    <ul>
+                        <li>Zero</li>
+                        <li>One</li>
+                        <li>Many</li>
+                        <li>Boundaries</li>
+                        <li>Interfaces</li>
+                        <li>Exceptional</li>
+                        <li>Simple scenarios, simple solutions</li>
+                    </ul>
+                </aside>
             </section>
             <section>
                 <h2>String manipulation</h2>
@@ -658,8 +670,9 @@ auto capitalize(std::string_view text) {
   return text
     | ranges::view::enumerate
     | ranges::view::transform([](const auto &pair) -> char {
-      return pair.first == 0 ? std::toupper(pair.second) : std::tolower(pair.second);
-    })| ranges::to&lt;std::string&gt;;
+      return pair.first == 0 ? std::toupper(pair.second)
+                             : std::tolower(pair.second);
+    }) | ranges::to&lt;std::string&gt;;
 }
                 </code></pre>
             </section>
@@ -716,32 +729,34 @@ bool matches_inside(std::string_view needle, std::string_view haystack) {
                 </code></pre>
             </section>
             <section>
-                <ul>
-                    <li>string manipulation functions</li>
-                    <li>show evolution of initial_caps_only (also code gen!)
-                        - original
-                        - mutable range
-                        - (not checked in)
-                        <pre><code>std::string initial_caps_only(std::string_view text) {
-    return text | ranges::view::enumerate | ranges::view::transform([](const auto &pair) {
-               return pair.first == 0 ? toupper(pair.second) : tolower(pair.second);
-           })
-           | ranges::to&lt;std::string&gt;;
-}</code></pre>
-                        - final
-                        <pre><code>std::string initial_caps_only(std::string_view text) {
-    return ranges::view::concat(text | ranges::view::take(1) | ranges::view::transform(toupper),
-                                text | ranges::view::drop(1) | ranges::view::transform(tolower))
-           | ranges::to&lt;std::string&gt;;
-}</code></pre>
-                    </li>
-                    <li>Show joyous matches_inside implementation</li>
-                </ul>
+                <h2>More stuff</h2>
+                <div class="col2">
+                    <div>
+                        <pre><code data-trim data-noescape class="cpp">
+                        int armor[MAX_AC];
+                        // ...
+                        for (int i = 0; i < MAX_AC; ++i)
+                          armor[i] = 0;
+                        // ...
+                        for (int i = 0; i < MAX_AC; ++i)
+                          armor[i] = -1;
+                        </code></pre>
+                    </div>
+                    <div>
+                        <pre><code data-trim data-noescape class="cpp">
+                        std::array&lt;int, MAX_AC&gt; armour {};
+                        // ...
+                        ranges::fill(armour, -1);
+                        </code></pre>
+                    </div>
+                </div>
             </section>
-            <section>std::array? std::all_of etc? std::fill</section>
         </section>
 
         <section>
+            <section>
+                <h2>String formatting</h2>
+            </section>
             <section>
                 <h2>String formatting</h2>
                 <pre><code data-noescape, data-trim class="c++">
