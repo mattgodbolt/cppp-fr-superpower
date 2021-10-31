@@ -163,7 +163,7 @@
                         <td>4524</td>
                         <td>50977</td>
                     </tr>
-                     <tr>
+                    <tr>
                         <td>C++</td>
                         <td>6</td>
                         <td>54</td>
@@ -220,6 +220,7 @@
                 /* Display the current flags */
                 void display_flags (char *template, CHAR_DATA *ch, int current_val);
                 </code></pre>
+                </div>
             </section>
             <section>
                 <h2>overlap</h2>
@@ -341,15 +342,54 @@ struct AREA_DATA {
             </section>
             <section>
                 <h2>Changing an element</h2>
-                <h5>Compile errors...</h5>
-                <ul>
-                    <li>Assignment</li>
-                    <li><code>.c_str()</code></li>
-                    <li><code>snprintf</code> warnings...</li>
-                    <li><code>__attribute__((format(printf, 2, 3)</code></li>
-                    <li>Sanitizer!</li>
-                    <li>Testing is just run the app</li>
-                </ul>
+                <h5>CEDD</h5>
+                <h5 class="fragment">Compiler Error Driven Development</h5>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <pre><code>sprintf(buf, "Area: %s\n", pArea->name);</code></pre>
+                <pre class="fragment"><code class="c++" data-trim>
+warning: format '%s' expects argument of type 'char*',
+  but argument 3 has type 'const string'
+   10 |     sprintf(buf, "Area: %s\n", pArea->name);
+      |                         ~^
+      |                          |
+      |                          char*
+                </code></pre>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <pre><code class="c++" data-trim data-noescape>
+ /* Adds a line of text to the buffer, formatted. */
+void buffer_addline_fmt(BUFFER *buffer, const char *text, ...)
+<span class="fragment">     __attribute__((format(printf, 2, 3))); </span>
+            </code></pre>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <h5>JRIASWHDD</h5>
+                <h5 class="fragment">Just run it and see what happens driven development</h5>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <pre><code>
+==1090996==ERROR: LeakSanitizer: detected memory leaks
+
+Direct leak of 10 byte(s) in 1 object(s) allocated from:
+ #0 in __interceptor_strdup (./xania/out/debug/bin/xania+0x1c3d017)
+ #1 in load_area(_IO_FILE*, char *) ./xania/src/db.cpp:349
+ #2 in boot_db() ./xania/src/db.cpp:301
+ ...
+                </code></pre>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <pre><code class="c++" data-noescape data-trim>
+    pArea->name = strdup(fread_string(fp));
+                </code></pre>
+                <pre class="fragment"><code class="c++" data-noescape data-trim>
+    pArea->name = fread_string(fp);
+                </code></pre>
             </section>
             <section>
                 <h2>So now...</h2>
