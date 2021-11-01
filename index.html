@@ -116,6 +116,14 @@
                 </div>
             </section>
             <section>
+                <h2>What is a MUD?</h2>
+                <ul>
+                    <li>Dungeons &amp; Dragons</li>
+                    <li>Multiplayer</li>
+                    <li>Raw TCP clients</li>
+                </ul>
+            </section>
+            <section>
                 <h2>Xania</h2>
                 <div class="col2 stretch">
                     <div><img src="images/Xania.png" alt="old websites, amirite?"></div>
@@ -124,14 +132,6 @@
                 <aside class="notes">
                     Xania is one of the main reasons I graduated with a pretty poor Physics degrees.
                 </aside>
-            </section>
-            <section>
-                <h2>What is a MUD?</h2>
-                <ul>
-                    <li>Dungeons &amp; Dragons</li>
-                    <li>Multiplayer</li>
-                    <li>Raw TCP clients</li>
-                </ul>
             </section>
             <section>
                 <h2>What is a MUD?</h2>
@@ -187,10 +187,6 @@
                     <li><code>-fsanitize=...</code></li>
                     <li><a href="https://conan.io">conan</a></li>
                 </ul>
-            </section>
-            <section>
-                <h2>The most important thing</h2>
-                <h4>Do no harm!</h4>
             </section>
             <section>
                 <h2>The C++-i-fication</h2>
@@ -256,7 +252,7 @@ struct area_data {
 };
 
 typedef struct area_data AREA_DATA;
-AREA_DATA *areas;</code></pre>
+extern AREA_DATA *areas;</code></pre>
             </section>
             <section data-auto-animate="">
                 <h2>How to improve?</h2>
@@ -280,7 +276,7 @@ struct area_data {
 };
 <span class="fragment" data-fragment-index="4">// Unnecessary!</span>
 typedef struct area_data AREA_DATA;
-AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Global!</span>
+extern AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Global!</span>
 </code></pre>
                     </div>
                     <div>
@@ -314,6 +310,14 @@ struct AREA_DATA {
                     </code></pre>
                     </div>
                 </div>
+            </section>
+            <section>
+                <h2>Changing an element</h2>
+                <ul>
+                    <li>Build</li>
+                    <li>Run</li>
+                    <li>Manual test</li>
+                </ul>
             </section>
             <section>
                 <h2>Changing an element</h2>
@@ -384,12 +388,16 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...)
             </section>
             <section>
                 <h2>Changing an element</h2>
-                <pre><code class="c++" data-noescape data-trim>
+                <div class="col2">
+                    <div><pre><code class="c++" data-noescape data-trim>
     pArea->name = str_dup(fread_string(fp));
                 </code></pre>
-                <pre class="fragment"><code class="c++" data-noescape data-trim>
+                    </div>
+                    <div><pre class="fragment"><code class="c++" data-noescape data-trim>
     pArea->name = fread_string(fp);
                 </code></pre>
+                    </div>
+                </div>
             </section>
             <section>
                 <h2>And so on</h2>
@@ -420,7 +428,8 @@ struct AREA_DATA {
             </section>
             <section>
                 <h2>What's next?</h2>
-                <div>
+                <div class="col2">
+                    <div>
                     <pre><code data-trim data-noescape class="cpp">
 struct AREA_DATA {
   AREA_DATA *next;
@@ -430,15 +439,25 @@ struct AREA_DATA {
   // ...
 };
 
-AREA_DATA *areas;
+extern AREA_DATA *areas;
                     </code></pre>
+                    </div>
+                    <div>
+                <pre class="fragment"><code data-trim data-noescape class="cpp">
+struct AREA_DATA {
+  std::string name;
+  std::string areaname;
+  std::string filename;
+  // ...
+};
+
+extern std::vector&lt;AREA_DATA&gt; areas;
+                </code></pre>
+                    </div>
                 </div>
             </section>
             <section>
                 <h2>STL-i-fication</h2>
-                <pre><code data-trim data-noescape class="cpp">
-extern std::vector&lt;AREA_DATA&gt; areas;
-                </code></pre>
             </section>
             <section>
                 <h2>STL-i-fication</h2>
@@ -781,9 +800,9 @@ send_to_player(ch, buf);
             <section>
                 <h2>String formatting</h2>
                 <pre><code data-noescape, data-trim class="c++">
-extern void send_to_player(CHAR *ch, const char *fmt, ...);
+void Char::send_to(CHAR *ch, const char *fmt, ...);
 
-send_to_player(ch,
+ch->send_to(
   "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
   add_hp, ch->max_hit, add_mana, ch->max_mana,
   add_move, ch->max_move, add_prac, ch->practice);
@@ -792,10 +811,10 @@ send_to_player(ch,
             <section>
                 <h2>String formatting</h2>
                 <pre><code data-noescape, data-trim class="c++">
-extern void send_to_player(CHAR *ch, const char *fmt, ...)
+void Char::send_to(CHAR *ch, const char *fmt, ...)
     __attribute__((format(printf, 2, 3)));
 
-send_to_player(ch,
+ch->send_to(
   "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
   add_hp, ch->max_hit, add_mana, ch->max_mana,
   add_move, ch->max_move, add_prac, ch->practice);
@@ -804,7 +823,13 @@ send_to_player(ch,
             <section>
                 <h2>String formatting</h2>
                 <pre><code data-noescape, data-trim class="c++">
-send_to_player(ch,
+void Char::send_to(std::string_view txt);
+template &lt;typename... Args&gt;
+void Char::send_to(std::string_view format, Args &&... args) const {
+  return send_to(fmt::format(format, std::forward&lt;Args&gt;(args)...));
+}
+
+ch->send_to(
   "Your gain is: {}/{} hp, {}/{} m, {}/{} mv {}/{} prac.",
   add_hp, ch->max_hit, add_mana, ch->max_mana,
   add_move, ch->max_move, add_prac, ch->practice);
@@ -856,18 +881,84 @@ ch->send_line(
         </section>
 
         <section>
-            MUD input
-            interim solutions
-            naked function -> std::function<>
-            overloads; lambdas to make transition easier
-            incremental update!
-            ArgParser <-> cosnt char *
+            <section>
+                <h2>Parsing</h2>
+                <div class="col2">
+                    <div><pre><code data-noescape, data-trim class="c++">
+void do_save(Char *ch, char *args);
+void do_say(Char *ch, char *args);
+void do_score(Char *ch, char *args);
+void do_sell(Char *ch, char *arg);
+void do_set(Char *ch, char *arg);
+                    </code></pre>
+                    </div>
+                    <div><pre><code data-noescape, data-trim class="c++">
+void do_save(Char *ch);
+void do_say(Char *ch, ArgParser args);
+void do_score(Char *ch);
+void do_sell(Char *ch, ArgParser args);
+void do_set(Char *ch, ArgParser args);
+                </code></pre>
+                    </div>
+                </div>
+            </section>
+            <section>
+                <h2>Parsing</h2>
+                <pre><code data-noescape, data-trim class="c++">
+                class ArgParser {
+                public:
+                  explicit ArgParser(std::string args);
 
+                  bool empty() const;
+                  std::string_view shift();
+                  std::optional&lt;int&gt; try_parse_int();
+                  // other parse methods here...
+
+                  // Legacy support...
+                  const char *c_str() const;
+                };
+                </code></pre>
+            </section>
+            <section>
+                <h2>Parsing</h2>
+                <div class="col2">
+                    <div><pre><code data-noescape, data-trim class="c++">
+typedef void (*do_func)(
+  Char *ch, char *argument);
+void add_command(
+  const char *command,
+  do_func func);
+
+// ...
+
+add_command("save", do_save);
+add_command("say", do_say);
+                    </code></pre>
+                    </div>
+                    <div><pre><code data-noescape, data-trim class="c++">
+using Handler =
+  std::function&lt;void (Char *,
+                      ArgParser args)&gt;;
+void add_command(
+  const char *name, Handler handler);
+void add_command(
+  const char *name,
+  void (*d)(Char *, const char *)) {
+  add_command(
+    name,
+    [](Char *c, ArgParser args) {
+      d(c, args.c_str(); }
+    });
+}
+                </code></pre>
+                    </div>
+                </div>
+            </section>
         </section>
 
         <section>
             New functionality! Traditional testing, mocking etc
-            STill todo - unglobalisation
+            Still todo - unglobalisation
             Started singleton-ing things, still a ways to go
             One "Mud" class needed?
             Fuzzing!
@@ -876,7 +967,7 @@ ch->send_line(
 
         <section>
             Maybe for the conclusion slides?
-            even talk about how Compiler Explorer came about partially as moving forward incrementally wilhe keeping
+            even talk about how Compiler Explorer came about partially as moving forward incrementally while keeping
             backwards compat with a trading system?
         </section>
 
@@ -887,7 +978,6 @@ ch->send_line(
                 <li>Sanitisers</li>
                 <li>TDD-ish</li>
                 <li>Epochs?</li>
-                <li>"Privilege"</li>
             </ul>
             <aside class="notes">
                 <ul>

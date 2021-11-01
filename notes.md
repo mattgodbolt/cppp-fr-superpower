@@ -1,5 +1,27 @@
 # Notes
 
+## Runthrough Oct 31
+* 4m backstory
+* switch MUD and xania slides
+* "do no harm" drop
+* TODOs add more
+* show version?
+* after first simple fix need
+    * build
+    * run
+    * manual test
+* 20m to here
+* What's next highlight
+* 25m
+* TODO on STL-i-f-cation on ptr stability
+* 30m to class-i-fy slides
+* Ranges...seems weak
+* 50m to string formatting
+* No joined up thinking about fmt (can't read my handwriting)
+* fmt-> show variadic
+* total 1h10
+
+
 ## Recent notes
 
 What do I want folks to get from this talk?
