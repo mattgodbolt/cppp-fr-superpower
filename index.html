@@ -601,12 +601,12 @@ Short name~
                 void Char::yell(std::string_view exclamation) const {
                   send_line("You yell '{}'", exclamation);
 
-                  for (auto &victim : descriptors().all_but(*this)
+                  ranges::for_each(descriptors().all_but(*this)
                       | DescriptorFilter::same_area(*this)
-                      | DescriptorFilter::to_character()
-                    ) {
+                      | DescriptorFilter::to_character(),
+                      [&](auto &victim)  {
                     victim.send_line("{} yells '{}'", describe_for(victim), exclamation);
-                  }
+                  });
                 }
                 </code></pre>
             </section>

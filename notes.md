@@ -1,6 +1,49 @@
 # Notes
 
+# Runthrough Nov 1st
+
+<1h but had to compress. didn't get to end of things.
+
+* Add thanks (to snellers, need to check how to attribute)
+* Add RAII as a superpower
+* "Clearer goals"
+* Brain dump from tpurvele:
+    - (Did you run any correctness checks (e.g. memory checkers/leaks etc) before and after and see an improvement?) You
+      sort of answered.
+    - Did you run any performance analysis to compare the before and after? (Especially given that you had an arena
+      allocator before)
+    - `[[gcc::attribute]]` instead of "`__attribute__`"?
+    - You talked about constness but name/areaname etc are not const
+    - The direct replacement of AREA linked list would have been std::forward_list.
+    - Range UB?  http://www7.open-std.org/JTC1/SC22/WG21/docs/papers/2020/p2012r0.pdf, see first example of table on
+      first line.
+    - capitalize: boost::string algos?
+    - capitalize - if len == 0 -> exit
+    - capitalize - use destructuring instead of first/second?
+    - send_to - probably don't want std::forward in fmt example
+    - train: name the lambda?
+    - parsing - does it showcase C++ 17/modern C++?
+* Be clear about the printf stuff - show `.c_str()` in places
+    * make it clearer that `name` is a `std::string` on one slide
+* Have I used UB (tpurvele notes above, need to check)?
+    * are we relying on a range-based for loop UBism?
+    * pretty sure am not, no references returned but it's subtle...
+    * re-reading maybe we _are_ a problem?
+```cpp
+for (auto e : getTmp().getVals())
+    // UB if getter returns reference
+```
+* DO A DEMO!!!!
+* "Capitalize modern" <- not sure what that is
+* Lyle points out there's two themes - how to move incrementally, and what new things we're adding. Maybe be more
+  explicit if/when moving between sections
+* What bugs were caught?
+* Maybe start with strings?
+* Super important super power from Rob D -> "means your code _will continue to work_ years after you wrote it"
+* Parsing
+
 ## Runthrough Oct 31
+
 * 4m backstory
 * switch MUD and xania slides
 * "do no harm" drop
@@ -20,7 +63,6 @@
 * No joined up thinking about fmt (can't read my handwriting)
 * fmt-> show variadic
 * total 1h10
-
 
 ## Recent notes
 
@@ -88,6 +130,7 @@ What do I want folks to get from this talk?
     * increase confidence nothing's broken as we go
 
 ----
+
 * PREP WORK
 * cmakify, git, wall extra rename
     * "What C isn't valid C++"
@@ -97,6 +140,7 @@ What do I want folks to get from this talk?
 * Where to start?
 
 ----
+
 * Memory management!
 * Lots of strings copied all over the place!
 * Let's start with a single field
@@ -114,6 +158,7 @@ What do I want folks to get from this talk?
 * intro testing here?
 
 MORE NOTE FORM
+
 * Section: strong types?
     * enum stuff
     * std array of things - all naked arrays gone
