@@ -730,28 +730,6 @@ Short name~
         </section>
 
         <section>
-            <!-- proto range goodness -->
-            <section>
-                <h2>Ranges</h2>
-            </section>
-            <section>
-                <h2>Ranges</h2>
-                <pre><code data-trim data-noescape class="cpp">
-                void Char::yell(std::string_view exclamation) const {
-                  send_line("You yell '{}'", exclamation);
-
-                  ranges::for_each(descriptors().all_but(*this)
-                      | DescriptorFilter::same_area(*this)
-                      | DescriptorFilter::to_character(),
-                      [&](auto &victim)  {
-                    victim.send_line("{} yells '{}'", describe_for(victim), exclamation);
-                  });
-                }
-                </code></pre>
-            </section>
-        </section>
-
-        <section>
             <!-- range goodness -->
             <section>
                 <h2>String manipulation</h2>
@@ -1016,31 +994,81 @@ ch->send_line(
         </section>
 
         <section>
+            <!-- proto range goodness -->
+            <section>
+                <h2>Ranges</h2>
+            </section>
+            <section>
+                <h2>Ranges</h2>
+                <pre><code data-trim data-noescape data-line-numbers class="cpp">
+                void Char::yell(std::string_view exclamation) const {
+                  send_line("You yell '{}'", exclamation);
+
+                  ranges::for_each(
+                    descriptors().all_but(*this)
+                    | DescriptorFilter::same_area(*this)
+                    | DescriptorFilter::to_character(),
+                    [&](auto &victim)  {
+                      victim.send_line("{} yells '{}'", describe_for(victim), exclamation);
+                    }
+                  );
+                }
+                </code></pre>
+            </section>
+        </section>
+
+        <section>
             Strong types, bit fields
         </section>
 
         <section>
+            <!--- TODO probably more in the techniques for adapting old code to new -->
             <section>
                 <h2>Parsing</h2>
-                <!--- TODO probably more in the techniques for adapting old code to new -->
-                <div class="col2">
-                    <div><pre><code data-noescape data-trim class="cpp">
+                <div>
+                    <pre><code data-noescape data-trim data-line-numbers class="cpp">
+                    typedef void DO_FUN(CHAR_DATA *ch, char *argument);
+
+                    void parse(Char *ch, char *line) {
+                      char command[MAX_LINE_LENGTH];
+                      char *remainder = one_argument(line, command);
+                      DO_FUN *func = find_command(command);
+
+                      if (!func) {
+                        send_to_char(ch, "Huh?\n");
+                        return;
+                      }
+
+                      (*func)(ch, remainder);
+                    }
+                    </code></pre>
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
+// ...
 void do_save(Char *ch, char *args);
 void do_say(Char *ch, char *args);
 void do_score(Char *ch, char *args);
 void do_sell(Char *ch, char *arg);
 void do_set(Char *ch, char *arg);
+// ...
                     </code></pre>
-                    </div>
-                    <div><pre><code data-noescape data-trim class="cpp">
-void do_save(Char *ch);
-void do_say(Char *ch, ArgParser args);
-void do_score(Char *ch);
-void do_sell(Char *ch, ArgParser args);
-void do_set(Char *ch, char *arg);
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                    <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
+// ...
+void do_save(Char *ch);                 // no args!
+void do_say(Char *ch, ArgParser args);  // takes a parser obj
+void do_score(Char *ch);                // no args!
+void do_sell(Char *ch, ArgParser args); // takes a parser obj
+void do_set(Char *ch, char *arg);       // TODO(#55) update this!
+// ...
                 </code></pre>
                     </div>
-                </div>
             </section>
             <section>
                 <h2>Parsing</h2>
