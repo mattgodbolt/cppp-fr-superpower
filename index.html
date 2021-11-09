@@ -260,8 +260,6 @@ struct area_data {
   bool empty;
   char *areaname;
   char *filename;
-  int lvnum;
-  int uvnum;
   int vnum;
 };
 
@@ -273,24 +271,23 @@ extern AREA_DATA *areas;</code></pre>
                 <div class="col2">
                     <div>
                         <pre><code data-trim data-noescape class="cpp">
-struct area_data {  <span class="fragment" data-fragment-index="5">// class? private?</span>
-  struct area_data *next;<span class="fragment" data-fragment-index="1">// hand-rolled</span>
+struct area_data {  <span class="fragment" data-fragment-index="6">// class? private?</span>
+  struct area_data *next;<span class="fragment" data-fragment-index="1"> // !</span>
   char *name;       <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
-                                                                                        data-fragment-index="3">, c-style</span>
+                                                                                        data-fragment-index="3">/c-style</span>
   sh_int age;
   sh_int nplayer;
   bool empty;
   char *areaname;   <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
-                                                                                        data-fragment-index="3">, c-style</span>
+                                                                                        data-fragment-index="3">/c-style</span>
   char *filename;   <span class="fragment" data-fragment-index="2">// const</span><span class="fragment"
-                                                                                        data-fragment-index="3">, c-style</span>
-  int lvnum;
-  int uvnum;
+                                                                                        data-fragment-index="3">/c-style</span>
   int vnum;
 };
+
 <span class="fragment" data-fragment-index="4">// Unnecessary!</span>
 typedef struct area_data AREA_DATA;
-extern AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Global!</span>
+extern AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Global</span>
 </code></pre>
                     </div>
                     <div>
@@ -450,7 +447,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
                 };
 
                 char *fread_string(FILE *fp); /* Read a string into a static buffer */
-                char *str_dup(char *str_to_duplicate);
+                char *str_dup(char *str_to_duplicate); /* duplicates string with malloc */
 
                 void parse_area(AREA_DATA *pArea, FILE *fp) {
                   pArea->name = str_dup(fread_string(fp));
@@ -461,7 +458,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="|2">
+                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2">
                 void parse_area(AREA_DATA *pArea, FILE *fp) {
                   pArea->name = str_dup(fread_string(fp));
                   // ...rest of area parsing
@@ -483,7 +480,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
                 <h2>And so on</h2>
                 <pre data-id="code-so-on"><code data-trim data-noescape data-line-numbers class="cpp">
 struct AREA_DATA {
-  // ...
+  AREA_DATA *next;
   std::string name;
   char *areaname;
   char *filename;
@@ -495,7 +492,7 @@ struct AREA_DATA {
                 <h2>And so on</h2>
                 <pre data-id="code-so-on"><code data-trim data-noescape data-line-numbers class="cpp">
 struct AREA_DATA {
-  // ...
+  AREA_DATA *next;
   std::string name;
   std::string areaname;
   std::string filename;
@@ -505,7 +502,7 @@ struct AREA_DATA {
             </section>
             <section data-auto-animate>
                 <h2>What's next?</h2>
-                <pre data-id="code-whats-next"><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre data-id="code-whats-next"><code data-trim data-noescape data-line-numbers="2,9" class="cpp">
 struct AREA_DATA {
   AREA_DATA *next;
   std::string name;
@@ -605,8 +602,13 @@ std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas;
                 <h2>Class-i-fy</h2>
                 <ul>
                     <li><code>struct</code> &rarr; <code>class</code></li>
-                    <li>Put all in <code>public:</code></li>
-                    <li>One at a time make private, add accessors</li>
+                    <li>Make all members <code>public:</code></li>
+                    <li>One at a time:
+                        <ul>
+                            <li>make private</li>
+                            <li>add accessors</li>
+                        </ul>
+                    </li>
                 </ul>
             </section>
             <section data-auto-animate>
@@ -658,6 +660,43 @@ public:
   std::string filename;
 
   [[nodiscard]] const std::string &name() const { return name_; }
+
+  void parse(FILE *fp);
+  // ...
+};
+                </code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>Class-i-fy</h2>
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+class AREA_DATA {
+  std::string name_;
+  std::string area_name_;
+
+public:
+  std::string filename;
+
+  [[nodiscard]] const std::string &name() const { return name_; }
+  [[nodiscard]] const std::string &areaname() const { return area_name_; }
+
+  void parse(FILE *fp);
+  // ...
+};
+                </code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>Class-i-fy</h2>
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+class AREA_DATA {
+  std::string name_;
+  std::string area_name_;
+  std::string filename_;
+
+public:
+
+  [[nodiscard]] const std::string &name() const { return name_; }
+  [[nodiscard]] const std::string &areaname() const { return area_name_; }
+  [[nodiscard]] const std::string &filename() const { return filename_; }
 
   void parse(FILE *fp);
   // ...
@@ -780,20 +819,20 @@ SECTION("capitalize") {
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|6" class="cpp">
 std::string capitalize(const char *str) {
   std::string result;
   result.resize(strlen(str));
   for (int i = 0; i < strlen(str); i++)
     result[i] = std::tolower(str[i]);
-  result[0] = std::toupper(result[0]);  /// BUG!
+  result[0] = std::toupper(result[0]);
   return result;
 }
                 </code></pre>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|7|8|9-11" class="cpp">
 std::string capitalize(const char *str) {
   if (!*str)
     return "";
@@ -829,10 +868,9 @@ auto capitalize(std::string_view text) {
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|2|3|4|5" class="cpp">
 auto capitalize(std::string_view text) {
   return ranges::view::concat(
-    // NB not std::toupper
     text | ranges::view::take(1) | ranges::view::transform(toupper),
     text | ranges::view::drop(1) | ranges::view::transform(tolower)
   ) | ranges::to&lt;std::string&gt;
