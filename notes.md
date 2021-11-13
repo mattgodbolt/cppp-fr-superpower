@@ -42,7 +42,7 @@ for (auto e : getTmp().getVals())
 * Super important super power from Rob D -> "means your code _will continue to work_ years after you wrote it"
 * Parsing
 
-## Runthrough Oct 31
+## Runthrough Oct 31 
 
 * 4m backstory
 * switch MUD and xania slides

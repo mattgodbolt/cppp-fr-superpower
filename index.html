@@ -20,6 +20,10 @@
             flex: 1;
         }
 
+        pre.terminal {
+            background: #000;
+        }
+
         table.galaxy {
             background: white;
             border: none;
@@ -49,6 +53,20 @@
             margin: 0;
             padding: 0;
         }
+
+        span.ansi-white {
+            color: #d3d7cf;
+        }
+
+        img.allthethings {
+            float: right;
+            margin: -20px 0 0;
+        }
+
+        img.conan {
+            float: left;
+            margin: 0 20px 0 0;
+        }
     </style>
 </head>
 <body>
@@ -72,11 +90,11 @@
                     <li>Ubiquity</li>
                     <li>Performance</li>
                     <li>Multi-paradigm</li>
-                    <li>Clear object lifetime / RAII</li>
+                    <li>Clear object lifetime</li>
                 </ul>
             </section>
             <section>
-                <h2>But clearly not</h2>
+                <h2>Surely not?</h2>
                 <ul>
                     <li>Undefined behaviour</li>
                     <li class="fragment highlight-current-green" data-fragment-index="1">Wrong defaults</li>
@@ -90,9 +108,10 @@
             <section>
                 <h2>The goal</h2>
                 <ul>
-                    <li>Take ~25 year old code</li>
+                    <li>Take 25-year-old code</li>
                     <li>Port to modern C++17</li>
-                    <li class="fragment">...Incrementally!</li>
+                    <li class="fragment">Incrementally!</li>
+                    <li class="fragment">Why so important?</li>
                 </ul>
             </section>
         </section>
@@ -103,37 +122,82 @@
                 <h2>But Matt,<br>where will you find 25-year-old code?</h2>
             </section>
             <section>
-                <h2>History</h2>
-                <div class="col2">
-                    <div>
-                        <ul>
-                            <li>80s to early 90s - 6502 and ARM assembly</li>
-                            <li class="fragment" data-fragment-index="1">1994 discovered C</li>
-                            <li class="fragment">1997 started writing C++</li>
-                        </ul>
-                    </div>
-                    <div><img src="images/Matt1994.jpeg" alt="zomg" class="stretch fragment" data-fragment-index="1">
-                    </div>
-                </div>
+                <h2>1996</h2>
+                <img src="images/Matt1994.jpeg" alt="zomg" class="fragment" data-fragment-index="1">
             </section>
             <section>
                 <h2>MUDs!</h2>
             </section>
             <section>
                 <h2>What is a MUD?</h2>
-                <ul>
-                    <li>Multi-User Dungeon</li>
-                    <li>Text-based</li>
-                    <li>Dungeons &amp; Dragons</li>
-                    <li>Multiplayer</li>
-                    <li>Raw TCP clients</li>
-                </ul>
+                <div class="col2">
+                    <div>
+                        <ul>
+                            <li>Multi-User Dungeon</li>
+                            <li>Text-based</li>
+                            <li>Dungeons &amp; Dragons</li>
+                            <li>Multiplayer</li>
+                            <li>Raw TCP clients</li>
+                        </ul>
+                    </div>
+                </div>
             </section>
             <section>
                 <h2>Xania</h2>
                 <div class="col2 stretch">
                     <div><img src="images/Xania.png" alt="old websites, amirite?"></div>
-                    <div><img src="images/xania-play.png" alt="xania in play"></div>
+                    <div>
+<pre class="terminal" style="font-size: 27%">
+<span style="color: #CC0000; "><b>The Temple Square</b></span>
+
+  This is the most southern end of the Temple of Isca. The surface of
+the marble flooring has been chipped and worn by the thousands of feet
+which have trampled through here since Midgaard was founded. To the
+north, a fine set of curved steps opens before you, leading towards
+the sacred altar. The centre of activity in this city is immediately
+south of you, at Market Square. You hear faint sounds of battle high
+above you and wonder why anyone would wish to fight in this fair city.
+
+<span class="ansi-white"><b>[Exits: north east south west up]</b></span>
+<span class="ansi-white">     A small white fountain gushes forth here.</span>
+<span class="ansi-white">A verminous gutter rat eyes you greedily and gnashes its teeth.</span>
+<span style="color: #75507B; "><b>--> kill rat</b></span>
+<span class="ansi-white">Your stab does </span><span style="color: #CC0000; "><b>UNSPEAKABLE</b></span><span
+        class="ansi-white"> things to a gutter rat&apos;s head!</span>
+<span style="color: #CC0000; "><b>A gutter rat is DEAD!!</b></span>
+<span class="ansi-white">You receive 0 experience points.</span>
+<span class="ansi-white">A gutter rat hits the ground ... DEAD.</span>
+<span class="ansi-white">A gutter rat&apos;s severed head plops on the ground.</span>
+<span class="ansi-white">Etaine is unimpressed by your sacrifice but grants you a single gold coin.</span>
+<span style="color: #4E9A06; ">Faramir gossips &apos;greetings!&apos;</span>
+<span style="color: #75507B; "><b>--> w</b></span>
+<span style="color: #CC0000; "><b>Entrance to Cleric&apos;s Guild</b></span>
+
+<span class="ansi-white">  The entrance hall is a small modest room, reflecting the true nature of</span>
+<span class="ansi-white">the Clerics.  The exit leads east to the temple square.  A small entrance to</span>
+<span class="ansi-white">the bar is in the northern wall.</span>
+
+<span class="ansi-white"><b>[Exits: north east]</b></span>
+<span class="ansi-white">A vagabond is here, looking for victims.</span>
+<span class="ansi-white">A knight templar is guarding the entrance.</span>
+<span style="color: #75507B; "><b>--> look vagabond</b></span>
+<span class="ansi-white">He looks pretty mean.</span>
+<span class="ansi-white">The vagabond is in excellent condition.</span>
+
+<span class="ansi-white">The vagabond is using:</span>
+<span class="ansi-white">&lt;worn on body&gt;      a hard leather jerkin</span>
+<span class="ansi-white">&lt;worn around wrist&gt; a leather bracer</span>
+<span class="ansi-white">&lt;wielded&gt;           a small sword</span>
+<hr>
+<span style="color: #75507B; ">150 [</span><span style="color: #CC0000; ">|||</span><span
+        style="color: #C4A000; ">|||</span><span style="color: #4E9A06; ">||||</span><span style="color: #75507B; ">] 184/184 1609&gt; </span>w
+<span style="color: #75507B; ">150 [</span><span style="color: #CC0000; ">|||</span><span
+        style="color: #C4A000; ">|||</span><span style="color: #4E9A06; ">||||</span><span style="color: #75507B; ">] 184/184 1609&gt; </span>look vagabond
+<span style="color: #75507B; ">150 [</span><span style="color: #CC0000; ">|||</span><span
+        style="color: #C4A000; ">|||</span><span style="color: #4E9A06; ">||||</span><span style="color: #75507B; ">] 184/184 1609&gt; </span>
+
+</pre>
+                    </div>
                 </div>
                 <aside class="notes">
                     Xania is one of the main reasons I graduated with a pretty poor Physics degrees.
@@ -187,17 +251,22 @@
                 <h2>Groundwork</h2>
                 <ul>
                     <li><code>git</code></li>
-                    <li><code>CMake</code></li>
-                    <li><code>-Wall -Wextra</code></li>
-                    <li><code>clang-format</code></li>
-                    <li><code>-fsanitize=...</code></li>
-                    <li><a href="https://conan.io">conan</a></li>
-                    <li>Run &amp; test!</li>
+                    <li class="fragment"><code>CMake</code></li>
+                    <li class="fragment"><code>clang-format</code></li>
+                    <li class="fragment"><code>-Wall -Wextra -fsanitize=</code>
+                        <img src="images/all-the-things.png" alt="all the things" height="80px" class="allthethings">
+                    </li>
+                    <li class="fragment"><a href="https://conan.io">conan</a>
+                        <img src="images/conan_frogarian.png" height="50px" alt="conan" class="conan"></li>
+                    <li class="fragment">Run &amp; test!</li>
                 </ul>
             </section>
             <section>
                 <h2>Demo!</h2>
             </section>
+        </section>
+
+        <section>
             <section>
                 <h2>The C++-i-fication</h2>
                 <pre><code data-trim>
@@ -210,7 +279,7 @@
             <section>
                 <h2>Pop quiz!</h2>
                 <div class="fragment">
-                <img src="images/cpp-vs-dnd.svg" alt="C++ and D&D overlap" class="stretch">
+                    <img src="images/cpp-vs-dnd.svg" alt="C++ and D&D overlap" class="stretch">
                 </div>
             </section>
             <section>
@@ -426,7 +495,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </section>
             <section>
                 <h2>Changing an element</h2>
-                <pre style="background: #000;">
+                <pre class="terminal">
 <span style="color: #CC0000; "><b>==1090996==ERROR: LeakSanitizer: detected memory leaks</b></span>
 
 <span style="color: #3465A4; "><b>Direct leak of 10 byte(s) in 1 object(s) allocated from:</b></span>
@@ -543,7 +612,7 @@ extern std::vector&lt;AREA_DATA&gt; areas;
             <section>
                 <h2>STL-i-fication</h2>
                 <div>
-<pre style="background: #000;">
+<pre class="terminal">
 <span style="color: #CC0000; "><b>ERROR: AddressSanitizer: heap-use-after-free on address</b></span>
 <span style="color: #3465A4; "><b>READ of size 2 at xxx188a2 thread T0</b></span>
   #0 in reset_room(Room*) ./xania/src/db.cpp:1037
