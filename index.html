@@ -276,11 +276,13 @@ above you and wonder why anyone would wish to fight in this fair city.
                 ...
                 </code></pre>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>Pop quiz!</h2>
-                <div class="fragment">
-                    <img src="images/cpp-vs-dnd.svg" alt="C++ and D&D overlap" class="stretch">
-                </div>
+                <img data-id="venn" src="images/cpp-vs-dnd-q.svg" alt="C++ and D&D overlap" class="stretch">
+            </section>
+            <section data-auto-animate>
+                <h2>Pop quiz!</h2>
+                <img data-id="venn" src="images/cpp-vs-dnd.svg" alt="C++ and D&D overlap" class="stretch">
             </section>
             <section>
                 <h2>Pop quiz!</h2>
@@ -303,37 +305,31 @@ above you and wonder why anyone would wish to fight in this fair city.
         </section>
 
         <section>
-            <h2>Process</h2>
-            <ul>
-                <li>Small change</li>
-                <li>Test</li>
-                <li>Leave TODOs</li>
-            </ul>
-            <aside class="notes">
-                Remember point out the TODOs are to let you make minimal changes without feeling bad. Slightly better
-                each step of the way. Ideally TDD - write a test first, but we don't have that luxury yet.
-            </aside>
+            <section>
+                <h2>Process</h2>
+                <ul>
+                    <li>Small change</li>
+                    <li>Test</li>
+                    <li>Leave TODOs</li>
+                </ul>
+                <aside class="notes">
+                    Remember point out the TODOs are to let you make minimal changes without feeling bad. Slightly
+                    better
+                    each step of the way. Ideally TDD - write a test first, but we don't have that luxury yet.
+                </aside>
+            </section>
+            <section>
+                <h2>Process</h2>
+                <ul>
+                    <li>CEDD</li>
+                    <li>JRIASWHDD</li>
+                    <li>TDD</li>
+                </ul>
+            </section>
         </section>
 
         <section>
             <!-- incremental updates -->
-            <section>
-                <h2>How to improve?</h2>
-                <pre><code data-trim data-noescape class="cpp">
-struct area_data {
-  struct area_data *next;
-  char *name;
-  sh_int age;
-  sh_int nplayer;
-  bool empty;
-  char *areaname;
-  char *filename;
-  int vnum;
-};
-
-typedef struct area_data AREA_DATA;
-extern AREA_DATA *areas;</code></pre>
-            </section>
             <section>
                 <h2>How to improve?</h2>
                 <div class="col2">
@@ -370,24 +366,25 @@ extern AREA_DATA *areas;   <span class="fragment" data-fragment-index="5">// Glo
                     </div>
                 </div>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>Simple fix</h2>
-                <div class="col2">
-                    <div><pre><code data-trim data-noescape class="cpp">
+                <div><pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
 struct area_data {
   struct area_data *next;
   // ...
 };
 typedef struct area_data AREA_DATA;
                     </code></pre>
-                    </div>
-                    <div><pre><code data-trim data-noescape class="cpp">
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Simple fix</h2>
+                <div><pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
 struct AREA_DATA {
   AREA_DATA *next;
   // ...
 };
                     </code></pre>
-                    </div>
                 </div>
             </section>
             <section>
@@ -425,9 +422,10 @@ struct AREA_DATA {
                 </div>
             </section>
             <section>
-                <h2>Changing an element</h2>
-                <h5>CEDD</h5>
-                <h5 class="fragment">Compiler Error Driven Development</h5>
+                <h2>CEDD</h2>
+                <div class="stretch">
+                    <img src="images/cedd.png" class="fragment" alt="CEDD">
+                </div>
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
@@ -653,7 +651,7 @@ SUMMARY: heap-use-after-free ./xania/src/db.cpp:1037 in reset_room(Room*)
             </section>
             <section>
                 <h2>STL-i-fication</h2>
-                <pre><code data-trim data-noescape class="cpp">
+                <pre><code data-trim data-noescape data-line-numbers class="cpp">
 struct AREA_DATA {
   std::string name;
   std::string areaname;
