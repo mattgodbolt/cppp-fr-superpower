@@ -67,6 +67,13 @@
             float: left;
             margin: 0 20px 0 0;
         }
+
+        div.attribution {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            font-size: 20%;
+        }
     </style>
 </head>
 <body>
@@ -123,7 +130,17 @@
             </section>
             <section>
                 <h2>1996</h2>
-                <img src="images/Matt1994.jpeg" alt="zomg" class="fragment" data-fragment-index="1">
+                <div class="col2">
+                    <div><img src="images/wannabe.png" alt="Spice Girls Wannabe" class="fragment"></div>
+                    <div><img src="images/USB.png" alt="zomg" class="fragment"></div>
+                    <div><img src="images/Matt1994.jpeg" alt="zomg" class="fragment"></div>
+                </div>
+                <div class="attribution">
+                    <div>USB image from
+                        <a href="https://www.howtogeek.com/713525/the-usb-paradox-why-do-usb-connections-need-three-tries/">
+                            How-To Geek</a>
+                    </div>
+                </div>
             </section>
             <section>
                 <h2>MUDs!</h2>
@@ -279,10 +296,12 @@ above you and wonder why anyone would wish to fight in this fair city.
             <section data-auto-animate>
                 <h2>Pop quiz!</h2>
                 <img data-id="venn" src="images/cpp-vs-dnd-q.svg" alt="C++ and D&D overlap" class="stretch">
+                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana Dusíková</a></div>
             </section>
             <section data-auto-animate>
                 <h2>Pop quiz!</h2>
                 <img data-id="venn" src="images/cpp-vs-dnd.svg" alt="C++ and D&D overlap" class="stretch">
+                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana Dusíková</a></div>
             </section>
             <section>
                 <h2>Pop quiz!</h2>
@@ -426,6 +445,9 @@ struct AREA_DATA {
                 <div class="stretch">
                     <img src="images/cedd.png" class="fragment" alt="CEDD">
                 </div>
+                <div class="attribution">
+                    Image generated with the <a href="https://dev.to/rly">O RLY Cover Generator</a>
+                </div>
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
@@ -453,7 +475,7 @@ warning: format '%s' expects argument of type 'char*',
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <pre data-id="code"><code data-line-numbers data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-line-numbers data-ln-start-from="7" data-noescape data-trim class="cpp">
                 void report_area(AREA_DATA *pArea) {
                   char buf[MAX_STRING_LENGTH];
                   sprintf(buf, "Area: %s\n", pArea->name);
@@ -463,7 +485,7 @@ warning: format '%s' expects argument of type 'char*',
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <pre data-id="code"><code data-line-numbers data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-line-numbers data-ln-start-from="7" data-noescape data-trim class="cpp">
                 void report_area(AREA_DATA *pArea) {
                   char buf[MAX_STRING_LENGTH];
                   sprintf(buf, "Area: %s\n", pArea->name<em>.c_str()</em>);
@@ -524,7 +546,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2">
+                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2" data-ln-start-from="10">
                 void parse_area(AREA_DATA *pArea, FILE *fp) {
                   pArea->name = str_dup(fread_string(fp));
                   // ...rest of area parsing
@@ -534,7 +556,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers>
+                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2" data-ln-start-from="10">
                 void parse_area(AREA_DATA *pArea, FILE *fp) {
                   pArea->name = fread_string(fp);
                   // ...rest of area parsing
@@ -600,10 +622,19 @@ extern std::vector&lt;AREA_DATA&gt; areas;
             <section data-auto-animate>
                 <h2>STL-i-fication</h2>
                 <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+                AREA_DATA *current_area = NULL;
+
                 void load_area(FILE *fp) {
                   AREA_DATA area{};
                   parse_area(&area, fp);
                   areas.emplace_back(std::move(area));
+                  current_area = &areas.back();
+                }
+
+                void load_room(FILE *fp) {
+                  ROOM_DATA *room = /*...*/;
+                  // ...
+                  room->area = current_area;
                 }
                 </code></pre>
             </section>
@@ -779,10 +810,9 @@ public:
                 </ul>
             </section>
             <section>
-                <!-- TODO this doesn't work -->
                 <h2>Class-i-fied</h2>
                 <div class="col2">
-                    <div><pre><code data-trim data-noescape data-line-numbers="|2|" class="cpp">
+                    <div><pre><code data-trim data-noescape data-line-numbers="|2|7|9|" class="cpp">
 class Area {
   std::string description_;
   ush_int num_players_{};
@@ -798,7 +828,7 @@ public:
   // ...continued on next panel -->
                 </code></pre>
                     </div>
-                    <div><pre><code data-trim data-noescape data-line-numbers="1-3" class="cpp">
+                    <div><pre><code data-trim data-noescape data-line-numbers="|1-3|5-7|9-12"  data-ln-start-from="14" class="cpp">
   static Area parse(
     FILE *fp,
     std::string filename);
