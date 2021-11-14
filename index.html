@@ -74,6 +74,11 @@
             right: 0;
             font-size: 20%;
         }
+
+        .reveal pre code {
+            /* prevent flapping during animation */
+            overflow-y: hidden !important;
+        }
     </style>
 </head>
 <body>
@@ -90,6 +95,8 @@
             <section>
                 <h2>C++'s Superpower</h2>
                 <img src="images/cppman_hana.jpg" class="stretch" alt="C++ superman">
+                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana
+                    Dusíková</a></div>
             </section>
             <section>
                 <h2>What could it be?</h2>
@@ -296,12 +303,14 @@ above you and wonder why anyone would wish to fight in this fair city.
             <section data-auto-animate>
                 <h2>Pop quiz!</h2>
                 <img data-id="venn" src="images/cpp-vs-dnd-q.svg" alt="C++ and D&D overlap" class="stretch">
-                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana Dusíková</a></div>
+                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana
+                    Dusíková</a></div>
             </section>
             <section data-auto-animate>
                 <h2>Pop quiz!</h2>
                 <img data-id="venn" src="images/cpp-vs-dnd.svg" alt="C++ and D&D overlap" class="stretch">
-                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana Dusíková</a></div>
+                <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana
+                    Dusíková</a></div>
             </section>
             <section>
                 <h2>Pop quiz!</h2>
@@ -546,7 +555,8 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2" data-ln-start-from="10">
+                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2"
+                                               data-ln-start-from="10">
                 void parse_area(AREA_DATA *pArea, FILE *fp) {
                   pArea->name = str_dup(fread_string(fp));
                   // ...rest of area parsing
@@ -556,7 +566,8 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2" data-ln-start-from="10">
+                <div><pre data-id="code"><code class="cpp" data-noescape data-trim data-line-numbers="2"
+                                               data-ln-start-from="10">
                 void parse_area(AREA_DATA *pArea, FILE *fp) {
                   pArea->name = fread_string(fp);
                   // ...rest of area parsing
@@ -828,7 +839,8 @@ public:
   // ...continued on next panel -->
                 </code></pre>
                     </div>
-                    <div><pre><code data-trim data-noescape data-line-numbers="|1-3|5-7|9-12"  data-ln-start-from="14" class="cpp">
+                    <div><pre><code data-trim data-noescape data-line-numbers="|1-3|5-7|9-12" data-ln-start-from="14"
+                                    class="cpp">
   static Area parse(
     FILE *fp,
     std::string filename);
@@ -872,10 +884,28 @@ Short name~
         <section>
             <section>
                 <h2>String manipulation</h2>
+                <aside class="notes">
+                    Lots of this in the mud. Didn't think to use boost algorithms...
+                    Wanted to try out new ranges v3 library. Hope to move to C++20 ranges.
+                </aside>
             </section>
             <section>
                 <h2>String manipulation</h2>
-                <pre><code data-trim data-noescape data-line-numbers class="cpp">
+                <ul>
+                    <li>Capitalize first letter</li>
+                    <li>To uppercase/lowercase</li>
+                    <li>Whitespace trimming</li>
+                    <li>Case insensitive matches</li>
+                    <li>Prefixes/suffixes</li>
+                    <li>Parsing/tokenising</li>
+                </ul>
+                <aside class="notes">
+                    Talk about boost string algorithms, why didn't pick them...
+                </aside>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <pre><code data-trim data-noescape data-line-numbers="|1|2|5-8" class="cpp">
 char *capitalize(const char *str) {
   static char strcap[MAX_STRING_LENGTH];
   int i;
@@ -888,9 +918,9 @@ char *capitalize(const char *str) {
 }
                 </code></pre>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre data-id="code1"><code data-trim data-noescape data-line-numbers class="cpp">
 SECTION("capitalize") {
   CHECK(capitalize("") == ""s);
   CHECK(capitalize("a") == "A"s);
@@ -901,6 +931,19 @@ SECTION("capitalize") {
 }
                 </code></pre>
                 <h5 class="fragment">ZOMBIES</h5>
+            </section>
+            <section data-auto-animate>
+                <h2>String manipulation</h2>
+                <pre data-id="code1"><code data-trim data-noescape data-line-numbers class="cpp">
+SECTION("capitalize") {
+  CHECK(capitalize("") == ""s);                  // Zero, Boundaries
+  CHECK(capitalize("a") == "A"s);                // One
+  CHECK(capitalize("A") == "A"s);
+  CHECK(capitalize("a monkey") == "A monkey"s);  // Many, Interface
+  CHECK(capitalize("A MONKEY") == "A monkey"s);
+  CHECK(capitalize("a MonkeY") == "A monkey"s);  // Exceptional
+}
+                </code></pre>
                 <aside class="notes">
                     <ul>
                         <li>Zero</li>
@@ -912,6 +955,7 @@ SECTION("capitalize") {
                         <li>Simple scenarios, simple solutions</li>
                     </ul>
                 </aside>
+                <h5>ZOMBIES</h5>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -948,7 +992,11 @@ std::string capitalize(const char *str) {
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
+                <h5>Enter <code>string_view</code> and ranges v3</h5>
+            </section>
+            <section data-auto-animate>
+                <h2>String manipulation</h2>
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|1|2|3|4|5-8|10" class="cpp">
 auto capitalize(std::string_view text) {
   return text
     | ranges::view::enumerate
@@ -969,23 +1017,14 @@ auto capitalize(std::string_view text) {
   return ranges::view::concat(
     text | ranges::view::take(1) | ranges::view::transform(toupper),
     text | ranges::view::drop(1) | ranges::view::transform(tolower)
-  ) | ranges::to&lt;std::string&gt;
+  ) | ranges::to&lt;std::string&gt;;
 }
                 </code></pre>
                 <!-- https://godbolt.org/z/eKMsvoxnb -->
             </section>
             <section>
                 <h2>String manipulation</h2>
-                <ul>
-                    <li>to uppercase/lowercase</li>
-                    <li>whitespace trimming</li>
-                    <li>case insensitive matches</li>
-                    <li>prefixes/suffixes</li>
-                    <li>parsing</li>
-                </ul>
-                <aside class="notes">
-                    Talk about boost string algorithms, why didn't pick them...
-                </aside>
+                <h5>Case-insensitive <code>strstr</code></h5>
             </section>
             <section>
                 <h2>String manipulation</h2>
@@ -1008,7 +1047,7 @@ bool matches_inside(const char *astr, const char *bstr) {
             </section>
             <section>
                 <h2>String manipulation</h2>
-                <pre><code data-trim data-noescape class="cpp">
+                <pre><code data-trim data-noescape data-line-numbers="|2|3|4" class="cpp">
 bool matches_inside(std::string_view needle, std::string_view haystack) {
   auto needle_low = needle | ranges::views::transform(tolower);
   auto haystack_low = haystack | ranges::views::transform(tolower);
@@ -1016,59 +1055,42 @@ bool matches_inside(std::string_view needle, std::string_view haystack) {
 }
                 </code></pre>
             </section>
-            <section>
-                <h2>More stuff</h2>
-                <div class="col2">
-                    <div>
-                        <pre><code data-trim data-noescape class="cpp">
-                        int armor[MAX_AC];
-                        // ...
-                        for (int i = 0; i < MAX_AC; ++i)
-                          armor[i] = 0;
-                        // ...
-                        for (int i = 0; i < MAX_AC; ++i)
-                          armor[i] = -1;
-                        </code></pre>
-                    </div>
-                    <div>
-                        <pre><code data-trim data-noescape class="cpp">
-                        std::array&lt;int, MAX_AC&gt; armour {};
-                        // ...
-                        ranges::fill(armour, -1);
-                        </code></pre>
-                    </div>
-                </div>
-            </section>
         </section>
 
         <section>
             <section>
                 <h2>String formatting</h2>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>String formatting</h2>
-                <pre><code data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
 char buf[MAX_STRING_LENGTH];
-sprintf(buf, "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
-  add_hp, ch->max_hit, add_mana, ch->max_mana,
-  add_move, ch->max_move, add_prac, ch->practice);
-send_to_player(ch, buf);
-</code></pre>
-            </section>
-            <section>
-                <h2>String formatting</h2>
-                <pre><code data-noescape data-trim class="cpp">
-char buf[MAX_STRING_LENGTH];
-snprintf(buf, sizeof(buf),
+
+sprintf(
+  buf,
   "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
   add_hp, ch->max_hit, add_mana, ch->max_mana,
   add_move, ch->max_move, add_prac, ch->practice);
 send_to_player(ch, buf);
 </code></pre>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>String formatting</h2>
-                <pre><code data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="3,5" class="cpp">
+char buf[MAX_STRING_LENGTH];
+
+snprintf(
+  buf,
+  sizeof(buf),
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+send_to_player(ch, buf);
+</code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>String formatting</h2>
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
 void Char::send_to(CHAR *ch, const char *fmt, ...);
 
 ch->send_to(
@@ -1077,9 +1099,9 @@ ch->send_to(
   add_move, ch->max_move, add_prac, ch->practice);
 </code></pre>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>String formatting</h2>
-                <pre><code data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
 [[gnu::format(printf, 2, 3)]]
 void Char::send_to(CHAR *ch, const char *fmt, ...);
 
@@ -1089,9 +1111,9 @@ ch->send_to(
   add_move, ch->max_move, add_prac, ch->practice);
 </code></pre>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>String formatting</h2>
-                <pre><code data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
 void Char::send_to(std::string_view txt);
 template &lt;typename... Args&gt;
 void Char::send_to(std::string_view format, Args &&... args) const {
@@ -1105,22 +1127,25 @@ ch->send_to(
 </code></pre>
             </section>
             <section>
-                <h2>String formatting</h2>
-                <pre><code data-noescape data-trim class="cpp">
+                <h2>String formatting &amp; Ranges</h2>
+                <pre><code data-noescape data-trim data-line-numbers="|2|3,13,14|5,11|6-8|7|10|" class="cpp">
 ch->send_line(
   "You can train: {}.",
   fmt::join(
+
     ranges::views::concat(
       all_stats | ranges::views::filter([&](auto stat) {
         return ch->perm_stat[stat] < get_max_train(ch, stat);
       }) | ranges::views::transform(to_short_string),
-      always_trainable
+
+      always_trainable   // "hp" and "mana"
     ),
+
     " "sv
   )
 );
-
 </code></pre>
+                <pre class="terminal"><span style="color: #D3D7CF; ">You can train: str dex con hp mana.</span></pre>
             </section>
             <section>
                 <h2>String formatting</h2>
@@ -1277,6 +1302,32 @@ void add_command(
         </section>
 
         <section>
+            <section>
+                <h2>More stuff</h2>
+                <div class="col2">
+                    <div>
+                        <pre><code data-trim data-noescape class="cpp">
+                        int armor[MAX_AC];
+                        // ...
+                        for (int i = 0; i < MAX_AC; ++i)
+                          armor[i] = 0;
+                        // ...
+                        for (int i = 0; i < MAX_AC; ++i)
+                          armor[i] = -1;
+                        </code></pre>
+                    </div>
+                    <div>
+                        <pre><code data-trim data-noescape class="cpp">
+                        std::array&lt;int, MAX_AC&gt; armour {};
+                        // ...
+                        ranges::fill(armour, -1);
+                        </code></pre>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section>
             New functionality! Traditional testing, mocking etc
             Still todo - unglobalisation
             Started singleton-ing things, still a ways to go
@@ -1296,27 +1347,37 @@ void add_command(
         </section>
 
         <section>
-            <h3>Conclusion</h3>
-            <ul>
-                <li>Compiler warnings</li>
-                <li>Sanitisers</li>
-                <li>TDD-ish</li>
-                <li>Epochs?</li>
-            </ul>
-            <aside class="notes">
+            <section>
+                <h3>Conclusion</h3>
                 <ul>
-                    <li>want people to realise that some things in C++ are that way because of back compat</li>
-                    <li>while often annoying backwards compat lets folks do this!</li>
-                    <li>not so important for some never-used code like xania, but</li>
+                    <li>Compiler warnings</li>
+                    <li>Sanitisers</li>
+                    <li>TDD-ish</li>
+                    <li>Epochs?</li>
                 </ul>
-            </aside>
-        </section>
-        <section>
-            <h3>Thanks to</h3>
-            <ul>
-                <li>Rob Snell</li>
-                <li>Hana Dusíková</li>
-            </ul>
+                <aside class="notes">
+                    <ul>
+                        <li>want people to realise that some things in C++ are that way because of back compat</li>
+                        <li>while often annoying backwards compat lets folks do this!</li>
+                        <li>not so important for some never-used code like xania, but</li>
+                    </ul>
+                </aside>
+            </section>
+            <section>
+                <h3>Thanks to</h3>
+                <ul>
+                    <li>Rob Snell &amp; the rest of the Xania developers</li>
+                    <li>Hana Dusíková</li>
+                </ul>
+            </section>
+            <section>
+                <h3>Final thoughts</h3>
+                <ul>
+                    <li>Source on Github: <a href="https://github.com/mattgodbolt/xania">mattgodbolt/xania</a></li>
+                    <li><b>Beta</b> at <code>telnet <a href="telnet://mud.xania.org:9000">mud.xania.org 9000</a></code></li>
+                    <li>Maybe your code will still compile in 2046!</li>
+                </ul>
+            </section>
         </section>
     </div>
 </div>
