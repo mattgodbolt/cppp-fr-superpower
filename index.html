@@ -1226,12 +1226,12 @@ ch->send_line(
                 <h2>Parsing</h2>
                 <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
 // ...
-void do_save(Char *ch, char *args);
-void do_say(Char *ch, char *args);
-void do_score(Char *ch, char *args);
-void do_sell(Char *ch, char *arg);
+void do_save(Char *ch, const char *args);
+void do_say(Char *ch, const char *args);
+void do_score(Char *ch, const char *args);
+void do_sell(Char *ch, const char *arg);
 void do_set(Char *ch, char *arg);
-// ...
+// ...a few hundred more...
                     </code></pre>
                 </div>
             </section>
@@ -1243,8 +1243,8 @@ void do_save(Char *ch);                 // no args!
 void do_say(Char *ch, ArgParser args);  // takes a parser obj
 void do_score(Char *ch);                // no args!
 void do_sell(Char *ch, ArgParser args); // takes a parser obj
-void do_set(Char *ch, char *arg);       // TODO(#55) update this!
-// ...
+void do_set(Char *ch, const char *arg); // TODO(#55) update this!
+// ...a few hundred more...
                 </code></pre>
                 </div>
             </section>
@@ -1265,49 +1265,52 @@ void do_set(Char *ch, char *arg);       // TODO(#55) update this!
                 };
                 </code></pre>
             </section>
-            <section>
+            <section data-auto-animate>
                 <h2>Parsing</h2>
-                <div class="col2">
-                    <div><pre><code data-noescape data-trim class="cpp">
-typedef void (*do_func)(
-  Char *ch, char *argument);
-void add_command(
-  const char *command,
-  do_func func);
+                <div><pre data-id="code"><code data-line-numbers="|1|4|8,9" data-noescape data-trim class="cpp">
+typedef void (*do_func)(Char *ch, char *argument);
 
-// ...
+// Adds a function for "command" to the command map.
+void add_command(const char *command, do_func func);
 
-add_command("save", do_save);
-add_command("say", do_say);
+void init_commands() {
+  // ...
+  add_command("save", do_save);
+  add_command("say", do_say);
+  // ... and so on
+}
                     </code></pre>
-                    </div>
-                    <div><pre><code data-noescape data-trim class="cpp">
-using Handler =
-  std::function&lt;void (Char *,
-                      ArgParser args)&gt;;
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                <div><pre data-id="code"><code data-line-numbers="|1|4|7,8|9-14" data-noescape data-trim class="cpp">
+using Handler = std::function&lt;void (Char *, ArgParser args)&gt;;
+
+// New-style commands, taking a std::function handler.
+void add_command(std::string_view name, Handler handler);
+
+// handle old-style commands of the form do_fun(Char *, const char *)
 void add_command(
-  const char *name, Handler handler);
-void add_command(
-  const char *name,
-  void (*d)(Char *, const char *)) {
+    std::string_view name, void (*do_fun)(Char *, const char *)) {
+  // Add a bespoke lambda to adapt the new call to the old do_fun.
   add_command(
     name,
-    [](Char *c, ArgParser args) {
-      d(c, args.c_str(); }
+    [&do_fun](Char *c, ArgParser args) {
+      do_fun(c, args.c_str(); }
     });
 }
                 </code></pre>
-                    </div>
                 </div>
             </section>
         </section>
 
         <section>
             <section>
-                <h2>More stuff</h2>
+                <h2>Other improvements</h2>
                 <div class="col2">
                     <div>
-                        <pre><code data-trim data-noescape class="cpp">
+                        <pre><code data-trim data-noescape data-line-numbers="" class="cpp">
                         int armor[MAX_AC];
                         // ...
                         for (int i = 0; i < MAX_AC; ++i)
@@ -1318,7 +1321,7 @@ void add_command(
                         </code></pre>
                     </div>
                     <div>
-                        <pre><code data-trim data-noescape class="cpp">
+                        <pre><code data-trim data-noescape data-line-numbers="" class="cpp">
                         std::array&lt;int, MAX_AC&gt; armour {};
                         // ...
                         ranges::fill(armour, -1);
@@ -1329,32 +1332,27 @@ void add_command(
         </section>
 
         <section>
-            New functionality! Traditional testing, mocking etc
-            Still todo - unglobalisation
-            Started singleton-ing things, still a ways to go
-            One "Mud" class needed?
-            Fuzzing!
-            C++20
-        </section>
-
-        <section>
-            Maybe for the conclusion slides?
-            even talk about how Compiler Explorer came about partially as moving forward incrementally while keeping
-            backwards compat with a trading system?
-            Also! we take advantage of this every day when we build systems:
-            * We can incrementally move along from C++11, 14, 17, 20
-            * AND we know our code is safe for years to come!
-            Maybe you'll be presenting 25 year-old code one day?
+            <section>
+                <h3>Regrets</h3>
+                <ul>
+                    <li>Fuzzing <code>libfuzz</code></li>
+                    <li>TODO: unglobalisation</li>
+                    <li>C++20</li>
+                </ul>
+            </section>
         </section>
 
         <section>
             <section>
                 <h3>Conclusion</h3>
+            </section>
+            <section>
+                <h3>What helped</h3>
                 <ul>
                     <li>Compiler warnings</li>
                     <li>Sanitisers</li>
-                    <li>TDD-ish</li>
-                    <li>Epochs?</li>
+                    <li>CEDD &amp; TDD (ish)</li>
+                    <li class="fragment">Backwards Compatibility!!!</li>
                 </ul>
                 <aside class="notes">
                     <ul>
@@ -1363,6 +1361,18 @@ void add_command(
                         <li>not so important for some never-used code like xania, but</li>
                     </ul>
                 </aside>
+            </section>
+            <section>
+                <h3>Conclusion</h3>
+                <h5>The past</h5>
+            </section>
+            <section>
+                <h3>Conclusion</h3>
+                <h5>The now</h5>
+            </section>
+            <section>
+                <h3>Conclusion</h3>
+                <h5>The future</h5>
             </section>
             <section>
                 <h3>Thanks to</h3>
@@ -1375,9 +1385,13 @@ void add_command(
                 <h3>Final thoughts</h3>
                 <ul>
                     <li>Source on Github: <a href="https://github.com/mattgodbolt/xania">mattgodbolt/xania</a></li>
-                    <li><b>Beta</b> at <code>telnet <a href="telnet://mud.xania.org:9000">mud.xania.org 9000</a></code></li>
+                    <li><b>Beta</b> at <code>telnet <a href="telnet://mud.xania.org:9000">mud.xania.org 9000</a></code>
+                    </li>
                     <li>Maybe your code will still compile in 2046!</li>
                 </ul>
+            </section>
+            <section>
+                <h2>Thank you!</h2>
             </section>
         </section>
     </div>
