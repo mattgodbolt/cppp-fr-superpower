@@ -460,7 +460,7 @@ struct AREA_DATA {
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
-                <pre data-id="code"><code data-line-numbers data-noescape data-trim class="cpp">
+                <pre data-id="code"><code data-line-numbers="|9" data-noescape data-trim class="cpp">
                 struct AREA_DATA {
                   AREA_DATA *next;
                   std::string name;
@@ -826,7 +826,7 @@ public:
                     <div><pre><code data-trim data-noescape data-line-numbers="|2|7|9|" class="cpp">
 class Area {
   std::string description_;
-  ush_int num_players_{};
+  int num_players_{};
   bool empty_since_last_reset_{};
   int min_level_{0};
   int max_level_{MAX_LEVEL};
@@ -861,7 +861,7 @@ public:
             </section>
             <section>
                 <h2>Test</h2>
-                <pre><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre><code data-trim data-noescape data-line-numbers="|2-5|8|9-13" class="cpp">
 TEST_CASE("area loading") {
   test::MemFile fp(R"(ignored~
 Short name~
@@ -972,7 +972,7 @@ std::string capitalize(const char *str) {
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|7|8|9-11" class="cpp">
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|7|8|9-11|13" class="cpp">
 std::string capitalize(const char *str) {
   if (!*str)
     return "";
@@ -985,6 +985,7 @@ std::string capitalize(const char *str) {
       return std::tolower(c);
     }
   );
+  result[0] = std::toupper(result[0]);
   return result;
 }
                 </code></pre>
@@ -1091,7 +1092,7 @@ send_to_player(ch, buf);
             <section data-auto-animate>
                 <h2>String formatting</h2>
                 <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
-void Char::send_to(CHAR *ch, const char *fmt, ...);
+void Char::send_to(const char *fmt, ...);
 
 ch->send_to(
   "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
@@ -1102,8 +1103,8 @@ ch->send_to(
             <section data-auto-animate>
                 <h2>String formatting</h2>
                 <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
-[[gnu::format(printf, 2, 3)]]
-void Char::send_to(CHAR *ch, const char *fmt, ...);
+[[gnu::format(printf, 1, 2)]]
+void Char::send_to(const char *fmt, ...);
 
 ch->send_to(
   "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
@@ -1204,7 +1205,7 @@ ch->send_line(
                 <h2>Parsing</h2>
                 <div>
                     <pre><code data-noescape data-trim data-line-numbers class="cpp">
-                    typedef void DO_FUN(CHAR_DATA *ch, char *argument);
+                    typedef void DO_FUN(Char *ch, char *argument);
 
                     void parse(Char *ch, char *line) {
                       char command[MAX_LINE_LENGTH];
