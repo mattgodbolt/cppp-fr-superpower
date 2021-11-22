@@ -71,13 +71,26 @@
         div.attribution {
             position: fixed;
             bottom: 0;
-            right: 0;
+            right: 12em;
             font-size: 20%;
         }
 
         .reveal pre code {
             /* prevent flapping during animation */
             overflow-y: hidden !important;
+        }
+        div.footer {
+            z-index: 10;
+            font-size: 70%;
+            font-style: italic;
+            position: absolute;
+            bottom: 1em;
+            text-align: center;
+        }
+        div.footer.logo {
+            right: 1em;
+            margin-right: 15px;
+            height: 6em;
         }
     </style>
 </head>
@@ -87,14 +100,14 @@
     <div class="slides">
         <section>
             <!-- INTRO -->
-            <section>
+            <section class="hide-footer">
                 <h2>C++'s Superpower</h2>
                 <h4>Matt Godbolt &mdash; <a href="https://twitter.com/mattgodbolt">@mattgodbolt</a></h4>
                 <h6><a href="https://cppp.fr">cppp.fr</a> December 2021</h6>
             </section>
-            <section>
+            <section class="hide-footer">
                 <h2>C++'s Superpower</h2>
-                <img src="images/cppman_hana.jpg" class="stretch" alt="C++ superman">
+                <img src="images/cpp-man.png" class="stretch" alt="C++ superman">
                 <div data-id="hana" class="attribution">Image: <a href="https://twitter.com/hankadusikova">Hana
                     Dusíková</a></div>
             </section>
@@ -883,6 +896,99 @@ Short name~
 
         <section>
             <section>
+                <h2>String formatting</h2>
+            </section>
+            <section data-auto-animate>
+                <h2>String formatting</h2>
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
+char buf[MAX_STRING_LENGTH];
+
+sprintf(
+  buf,
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+send_to_player(ch, buf);
+</code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>String formatting</h2>
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="3,5" class="cpp">
+char buf[MAX_STRING_LENGTH];
+
+snprintf(
+  buf,
+  sizeof(buf),
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+send_to_player(ch, buf);
+</code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>String formatting</h2>
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
+void Char::send_to(const char *fmt, ...);
+
+ch->send_to(
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+</code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>String formatting</h2>
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
+[[gnu::format(printf, 1, 2)]]
+void Char::send_to(const char *fmt, ...);
+
+ch->send_to(
+  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+</code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>String formatting</h2>
+                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
+void Char::send_to(std::string_view txt);
+template &lt;typename... Args&gt;
+void Char::send_to(std::string_view format, Args &&... args) const {
+  return send_to(fmt::format(format, std::forward&lt;Args&gt;(args)...));
+}
+
+ch->send_to(
+  "Your gain is: {}/{} hp, {}/{} m, {}/{} mv {}/{} prac.",
+  add_hp, ch->max_hit, add_mana, ch->max_mana,
+  add_move, ch->max_move, add_prac, ch->practice);
+</code></pre>
+            </section>
+
+            <section>
+                <h2>String formatting</h2>
+                <table class="galaxy">
+                    <tr class="fragment">
+                        <td class="word"><code>sprintf()</code></td>
+                        <td><img src="images/galaxy1.jpeg" alt="galaxy 1"></td>
+                    </tr>
+                    <tr class="fragment">
+                        <td class="word"><code>snprintf()</code></td>
+                        <td><img src="images/galaxy2.jpeg" alt="galaxy 2"></td>
+                    </tr>
+                    <tr class="fragment">
+                        <td class="word"><code>[[gnu::format(printf...)]]</code></td>
+                        <td><img src="images/galaxy3.jpeg" alt="galaxy 3"></td>
+                    </tr>
+                    <tr class="fragment">
+                        <td class="word"><code>fmt::format()</code></td>
+                        <td><img src="images/galaxy4.jpeg" alt="galaxy 4"></td>
+                    </tr>
+                </table>
+            </section>
+        </section>
+
+        <section>
+            <section>
                 <h2>String manipulation</h2>
                 <aside class="notes">
                     Lots of this in the mud. Didn't think to use boost algorithms...
@@ -1030,6 +1136,8 @@ auto capitalize(std::string_view text) {
             <section>
                 <h2>String manipulation</h2>
                 <pre><code data-trim data-noescape class="cpp">
+bool has_prefix(const char *astr, const char *bstr) { /* ... */ }
+
 bool matches_inside(const char *astr, const char *bstr) {
     char c0;
     if ((c0 = LOWER(astr[0])) == '\0')
@@ -1059,73 +1167,9 @@ bool matches_inside(std::string_view needle, std::string_view haystack) {
         </section>
 
         <section>
+            <!-- proto range goodness -->
             <section>
-                <h2>String formatting</h2>
-            </section>
-            <section data-auto-animate>
-                <h2>String formatting</h2>
-                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
-char buf[MAX_STRING_LENGTH];
-
-sprintf(
-  buf,
-  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
-  add_hp, ch->max_hit, add_mana, ch->max_mana,
-  add_move, ch->max_move, add_prac, ch->practice);
-send_to_player(ch, buf);
-</code></pre>
-            </section>
-            <section data-auto-animate>
-                <h2>String formatting</h2>
-                <pre data-id="code"><code data-noescape data-trim data-line-numbers="3,5" class="cpp">
-char buf[MAX_STRING_LENGTH];
-
-snprintf(
-  buf,
-  sizeof(buf),
-  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
-  add_hp, ch->max_hit, add_mana, ch->max_mana,
-  add_move, ch->max_move, add_prac, ch->practice);
-send_to_player(ch, buf);
-</code></pre>
-            </section>
-            <section data-auto-animate>
-                <h2>String formatting</h2>
-                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
-void Char::send_to(const char *fmt, ...);
-
-ch->send_to(
-  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
-  add_hp, ch->max_hit, add_mana, ch->max_mana,
-  add_move, ch->max_move, add_prac, ch->practice);
-</code></pre>
-            </section>
-            <section data-auto-animate>
-                <h2>String formatting</h2>
-                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
-[[gnu::format(printf, 1, 2)]]
-void Char::send_to(const char *fmt, ...);
-
-ch->send_to(
-  "Your gain is: %d/%d hp, %d/%d m, %d/%d mv %d/%d prac.\n",
-  add_hp, ch->max_hit, add_mana, ch->max_mana,
-  add_move, ch->max_move, add_prac, ch->practice);
-</code></pre>
-            </section>
-            <section data-auto-animate>
-                <h2>String formatting</h2>
-                <pre data-id="code"><code data-noescape data-trim data-line-numbers="" class="cpp">
-void Char::send_to(std::string_view txt);
-template &lt;typename... Args&gt;
-void Char::send_to(std::string_view format, Args &&... args) const {
-  return send_to(fmt::format(format, std::forward&lt;Args&gt;(args)...));
-}
-
-ch->send_to(
-  "Your gain is: {}/{} hp, {}/{} m, {}/{} mv {}/{} prac.",
-  add_hp, ch->max_hit, add_mana, ch->max_mana,
-  add_move, ch->max_move, add_prac, ch->practice);
-</code></pre>
+                <h2>Other Ranges Stuff</h2>
             </section>
             <section>
                 <h2>String formatting &amp; Ranges</h2>
@@ -1149,32 +1193,27 @@ ch->send_line(
                 <pre class="terminal"><span style="color: #D3D7CF; ">You can train: str dex con hp mana.</span></pre>
             </section>
             <section>
-                <h2>String formatting</h2>
-                <table class="galaxy">
-                    <tr class="fragment">
-                        <td class="word"><code>sprintf()</code></td>
-                        <td><img src="images/galaxy1.jpeg" alt="galaxy 1"></td>
-                    </tr>
-                    <tr class="fragment">
-                        <td class="word"><code>snprintf()</code></td>
-                        <td><img src="images/galaxy2.jpeg" alt="galaxy 2"></td>
-                    </tr>
-                    <tr class="fragment">
-                        <td class="word"><code>[[gnu::format(printf...)]]</code></td>
-                        <td><img src="images/galaxy3.jpeg" alt="galaxy 3"></td>
-                    </tr>
-                    <tr class="fragment">
-                        <td class="word"><code>fmt::format()</code></td>
-                        <td><img src="images/galaxy4.jpeg" alt="galaxy 4"></td>
-                    </tr>
-                </table>
-            </section>
-        </section>
-
-        <section>
-            <!-- proto range goodness -->
-            <section>
-                <h2>Ranges</h2>
+                <h2><code>std::array</code> and ranges</h2>
+                <div class="col2">
+                    <div>
+                        <pre><code data-trim data-noescape data-line-numbers="" class="cpp">
+                        int armor[MAX_AC];
+                        // ...
+                        for (int i = 0; i < MAX_AC; ++i)
+                          armor[i] = 0;
+                        // ...
+                        for (int i = 0; i < MAX_AC; ++i)
+                          armor[i] = -1;
+                        </code></pre>
+                    </div>
+                    <div>
+                        <pre><code data-trim data-noescape data-line-numbers="" class="cpp">
+                        std::array&lt;int, MAX_AC&gt; armour {};
+                        // ...
+                        ranges::fill(armour, -1);
+                        </code></pre>
+                    </div>
+                </div>
             </section>
             <section>
                 <h2>Ranges</h2>
@@ -1193,10 +1232,6 @@ ch->send_line(
                 }
                 </code></pre>
             </section>
-        </section>
-
-        <section>
-            Strong types, bit fields
         </section>
 
         <section>
@@ -1307,31 +1342,11 @@ void add_command(
 
         <section>
             <section>
-                <h2>Other improvements</h2>
-                <div class="col2">
-                    <div>
-                        <pre><code data-trim data-noescape data-line-numbers="" class="cpp">
-                        int armor[MAX_AC];
-                        // ...
-                        for (int i = 0; i < MAX_AC; ++i)
-                          armor[i] = 0;
-                        // ...
-                        for (int i = 0; i < MAX_AC; ++i)
-                          armor[i] = -1;
-                        </code></pre>
-                    </div>
-                    <div>
-                        <pre><code data-trim data-noescape data-line-numbers="" class="cpp">
-                        std::array&lt;int, MAX_AC&gt; armour {};
-                        // ...
-                        ranges::fill(armour, -1);
-                        </code></pre>
-                    </div>
-                </div>
+                <h2>But wait there's more...</h2>
             </section>
-        </section>
-
-        <section>
+            <section>
+                Strong types, bit fields
+            </section>
             <section>
                 <h3>Regrets</h3>
                 <ul>
@@ -1382,18 +1397,24 @@ void add_command(
                 </ul>
             </section>
             <section>
-                <h3>Final thoughts</h3>
+                <h3><code>~Talk() {</code></h3>
                 <ul>
                     <li>Source on Github: <a href="https://github.com/mattgodbolt/xania">mattgodbolt/xania</a></li>
                     <li><b>Beta</b> at <code>telnet <a href="telnet://mud.xania.org:9000">mud.xania.org 9000</a></code>
                     </li>
                     <li>Maybe your code will still compile in 2046!</li>
                 </ul>
+                <h3><code>}</code></h3>
             </section>
             <section>
+                <h3><code>~Talk() {</code></h3>
                 <h2>Thank you!</h2>
+                <h3><code>}</code></h3>
             </section>
         </section>
+    </div>
+    <div class="footer logo">
+        <img src="images/cpp-man.png" alt="C++ Superman">
     </div>
 </div>
 
@@ -1406,6 +1427,8 @@ void add_command(
         width: 1200,
         height: 700,
         hash: true,
+        controls: false,
+        slideNumber: true,
         plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
     });
 </script>
