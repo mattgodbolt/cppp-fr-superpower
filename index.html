@@ -75,6 +75,20 @@
             font-size: 20%;
         }
 
+        div.shoutout {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            max-width: 10em;
+            border: 1px solid #0d99a5;
+            box-shadow: 10px 10px 5px 3px rgba(0, 0, 0, 0.4);
+            border-radius: 20px;
+            color: white;
+            font-size: 60%;
+            padding: 0.5em 1em;
+            background: #04045e;
+        }
+
         .reveal pre code {
             /* prevent flapping during animation */
             overflow-y: hidden !important;
@@ -121,6 +135,9 @@
                     <li>Multi-paradigm</li>
                     <li>Clear object lifetime</li>
                 </ul>
+                <div class="fragment shoutout">
+                    <div>Pavel Novikov will be talking about constructors/destructors tomorrow</div>
+                </div>
             </section>
             <section>
                 <h2>Surely not?</h2>
@@ -298,6 +315,9 @@ above you and wonder why anyone would wish to fight in this fair city.
                     <li class="fragment"><a href="https://conan.io">conan</a>
                         <img src="images/conan_frogarian.png" height="50px" alt="conan" class="conan"></li>
                     <li class="fragment">Run &amp; test!</li>
+                    <div class="fragment shoutout">
+                        <div>Julien Jomier will be talking about CMake later today</div>
+                    </div>
                 </ul>
             </section>
             <section>
@@ -362,7 +382,7 @@ above you and wonder why anyone would wish to fight in this fair city.
                 </aside>
             </section>
             <section>
-                <h2>Process</h2>
+                <h2>Techniques</h2>
                 <ul>
                     <li>CEDD</li>
                     <li>JRIASWHDD</li>
@@ -544,7 +564,7 @@ void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
 
 <span style="color: #3465A4; "><b>Direct leak of 10 byte(s) in 1 object(s) allocated from:</b></span>
  #0 in __interceptor_strdup (./xania/out/debug/bin/xania+0x1c3d017)
- #1 in load_area(_IO_FILE*, char *) ./xania/src/db.cpp:349
+ #1 in parse_area(_IO_FILE*, char *) ./xania/src/db.cpp:349
  #2 in boot_db() ./xania/src/db.cpp:301
  ...
                 </pre>
@@ -720,6 +740,9 @@ struct AREA_DATA {
 // TODO(#48): try and remove need for pointer stability.
 std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas;
                     </code></pre>
+                <div class="fragment shoutout">
+                    <div>Sébastien Gonzalve will talk about moving legacy code to smart pointers on Friday</div>
+                </div>
             </section>
             <section>
                 <h2>Class-i-fy</h2>
@@ -733,6 +756,9 @@ std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas;
                         </ul>
                     </li>
                 </ul>
+                <div class="fragment shoutout">
+                    <div>Serge Guelton talks about using C++ as C on steroids on Friday</div>
+                </div>
             </section>
             <section data-auto-animate>
                 <h2>Class-i-fy</h2>
@@ -1102,6 +1128,9 @@ std::string capitalize(const char *str) {
             <section>
                 <h2>String manipulation</h2>
                 <h5>Enter <code>string_view</code> and ranges v3</h5>
+                <div class="fragment shoutout">
+                    <div>See Barry Revzin's Keynote tomorrow</div>
+                </div>
             </section>
             <section>
                 <h2>String manipulation</h2>
@@ -1263,7 +1292,7 @@ ch->send_line(
             </section>
             <section>
                 <h2>Ranges</h2>
-                <pre><code data-trim data-noescape data-line-numbers class="cpp">
+                <pre><code data-trim data-noescape data-line-numbers="|2|4|5|6|7|8-10" class="cpp">
                 void Char::yell(std::string_view exclamation) const {
                   send_line("You yell '{}'", exclamation);
 
@@ -1271,121 +1300,12 @@ ch->send_line(
                     descriptors().all_but(*this)
                     | DescriptorFilter::same_area(*this)
                     | DescriptorFilter::to_character(),
-                    [&](auto &victim)  {
+                    [&](auto &victim) {
                       victim.send_line("{} yells '{}'", describe_for(victim), exclamation);
                     }
                   );
                 }
                 </code></pre>
-            </section>
-        </section>
-
-        <section>
-            <section>
-                <h2>Other tricks</h2>
-            </section>
-            <section>
-                <h2>Parsing</h2>
-                <div>
-                    <pre><code data-noescape data-trim data-line-numbers="|1,3-4|7-9|10-12|14" class="cpp">
-                    typedef void DO_FUN(Char *ch, const char *argument);
-
-                    void init_commands() { /* populates some kind of map */ }
-                    DO_FUN *find_command(const char *) { /* looks up in map */ }
-
-                    void parse(Char *ch, const char *line) {
-                      char command[MAX_LINE_LENGTH];
-                      char *remainder = one_argument(line, command);
-                      DO_FUN *func = find_command(command);
-                      if (!func) {
-                        send_to_char(ch, "Huh?\n");
-                        return;
-                      }
-                      (*func)(ch, remainder);
-                    }
-                    </code></pre>
-                </div>
-            </section>
-            <section data-auto-animate>
-                <h2>Parsing</h2>
-                <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
-// ...
-void do_save(Char *ch, const char *args);
-void do_say(Char *ch, const char *args);
-void do_score(Char *ch, const char *args);
-void do_sell(Char *ch, const char *arg);
-void do_set(Char *ch, const char *args);
-// ...a few hundred more...
-                    </code></pre>
-                </div>
-            </section>
-            <section data-auto-animate>
-                <h2>Parsing</h2>
-                <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
-// ...
-void do_save(Char *ch);                 // no args!
-void do_say(Char *ch, ArgParser args);  // takes a parser obj
-void do_score(Char *ch);                // no args!
-void do_sell(Char *ch, ArgParser args); // takes a parser obj
-void do_set(Char *ch, const char *arg); // TODO(#55) update this!
-// ...a few hundred more...
-                </code></pre>
-                </div>
-            </section>
-            <section>
-                <h2>Parsing</h2>
-                <pre><code data-noescape data-trim class="cpp">
-                class ArgParser {
-                public:
-                  explicit ArgParser(std::string args);
-
-                  bool empty() const;
-                  std::string_view shift();
-                  std::optional&lt;int&gt; try_parse_int();
-                  // other parse methods here...
-
-                  // Legacy support...
-                  const char *c_str() const;
-                };
-                </code></pre>
-            </section>
-            <section data-auto-animate>
-                <h2>Parsing</h2>
-                <div><pre data-id="code"><code data-line-numbers="|1|3|5-9" data-noescape data-trim class="cpp">
-void add_command(const char *command, DO_FUN *func);
-
-void init_commands() {
-  // ...
-  add_command("save", do_save);
-  add_command("say", do_say);
-  add_command("'", do_say);
-  add_command("score", do_score);
-  add_command("sell", do_sell);
-  // ... and so on
-}
-                    </code></pre>
-                </div>
-            </section>
-            <section data-auto-animate>
-                <h2>Parsing</h2>
-                <div><pre data-id="code"><code data-line-numbers="|1|4|7,8|9-14" data-noescape data-trim class="cpp">
-using Handler = std::function&lt;void (Char *, ArgParser args)&gt;;
-
-// New-style commands, taking a std::function handler.
-void add_command(std::string_view name, Handler handler);
-
-// handle old-style commands of the form do_fun(Char *, const char *)
-void add_command(
-    std::string_view name, void (*do_fun)(Char *, const char *)) {
-  // Add a bespoke lambda to adapt the new call to the old do_fun.
-  add_command(
-    name,
-    [&do_fun](Char *c, ArgParser args) {
-      do_fun(c, args.c_str(); }
-    });
-}
-                </code></pre>
-                </div>
             </section>
         </section>
 
@@ -1398,6 +1318,7 @@ void add_command(
                 <ul>
                     <li>Strong types &amp; <code>enum</code>s</li>
                     <li>Bit field enums</li>
+                    <li><code>std::function</code></li>
                     <li><code>std::optional</code></li>
                     <li><code>std::variant</code></li>
                 </ul>
@@ -1479,7 +1400,7 @@ void add_command(
             <section>
                 <h3>Thanks to</h3>
                 <ul>
-                    <li>Rob Snell, Phil Normal &amp; the other Xania developers</li>
+                    <li>Rob Snell, Phil Norman &amp; the other Xania developers</li>
                     <li>Hana Dusíková</li>
                     <li>Aquatic</li>
                     <li>C++ Denver</li>
@@ -1500,6 +1421,117 @@ void add_command(
                 <h2>Thank you!</h2>
                 <h3><code>}</code></h3>
             </section>
+
+            <section>
+                <section>
+                    <h2>Other tricks</h2>
+                </section>
+                <section>
+                    <h2>Parsing</h2>
+                    <div>
+                    <pre><code data-noescape data-trim data-line-numbers="|1,3-4|7-9|10-12|14" class="cpp">
+                    typedef void DO_FUN(Char *ch, const char *argument);
+
+                    void init_commands() { /* populates some kind of map */ }
+                    DO_FUN *find_command(const char *) { /* looks up in map */ }
+
+                    void parse(Char *ch, const char *line) {
+                      char command[MAX_LINE_LENGTH];
+                      char *remainder = one_argument(line, command);
+                      DO_FUN *func = find_command(command);
+                      if (!func) {
+                        send_to_char(ch, "Huh?\n");
+                        return;
+                      }
+                      (*func)(ch, remainder);
+                    }
+                    </code></pre>
+                    </div>
+                </section>
+                <section data-auto-animate>
+                    <h2>Parsing</h2>
+                    <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
+// ...
+void do_save(Char *ch, const char *args);
+void do_say(Char *ch, const char *args);
+void do_score(Char *ch, const char *args);
+void do_sell(Char *ch, const char *arg);
+void do_set(Char *ch, const char *args);
+// ...a few hundred more...
+                    </code></pre>
+                    </div>
+                </section>
+                <section data-auto-animate>
+                    <h2>Parsing</h2>
+                    <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
+// ...
+void do_save(Char *ch);                 // no args!
+void do_say(Char *ch, ArgParser args);  // takes a parser obj
+void do_score(Char *ch);                // no args!
+void do_sell(Char *ch, ArgParser args); // takes a parser obj
+void do_set(Char *ch, const char *arg); // TODO(#55) update this!
+// ...a few hundred more...
+                </code></pre>
+                    </div>
+                </section>
+                <section>
+                    <h2>Parsing</h2>
+                    <pre><code data-noescape data-trim class="cpp">
+                class ArgParser {
+                public:
+                  explicit ArgParser(std::string args);
+
+                  bool empty() const;
+                  std::string_view shift();
+                  std::optional&lt;int&gt; try_parse_int();
+                  // other parse methods here...
+
+                  // Legacy support...
+                  const char *c_str() const;
+                };
+                </code></pre>
+                </section>
+                <section data-auto-animate>
+                    <h2>Parsing</h2>
+                    <div><pre data-id="code"><code data-line-numbers="|1|3|5-9" data-noescape data-trim class="cpp">
+void add_command(const char *command, DO_FUN *func);
+
+void init_commands() {
+  // ...
+  add_command("save", do_save);
+  add_command("say", do_say);
+  add_command("'", do_say);
+  add_command("score", do_score);
+  add_command("sell", do_sell);
+  // ... and so on
+}
+                    </code></pre>
+                    </div>
+                </section>
+                <section data-auto-animate>
+                    <h2>Parsing</h2>
+                    <div><pre data-id="code"><code data-line-numbers="|1|4|7,8|9-14" data-noescape data-trim
+                                                   class="cpp">
+using Handler = std::function&lt;void (Char *, ArgParser args)&gt;;
+
+// New-style commands, taking a std::function handler.
+void add_command(std::string_view name, Handler handler);
+
+// handle old-style commands of the form do_fun(Char *, const char *)
+void add_command(
+    std::string_view name, void (*do_fun)(Char *, const char *)) {
+  // Add a bespoke lambda to adapt the new call to the old do_fun.
+  add_command(
+    name,
+    [&do_fun](Char *c, ArgParser args) {
+      do_fun(c, args.c_str(); }
+    });
+}
+                </code></pre>
+                    </div>
+                </section>
+            </section>
+
         </section>
     </div>
     <div class="footer logo">
