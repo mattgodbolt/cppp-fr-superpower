@@ -79,6 +79,7 @@
             /* prevent flapping during animation */
             overflow-y: hidden !important;
         }
+
         div.footer {
             z-index: 10;
             font-size: 70%;
@@ -87,6 +88,7 @@
             bottom: 1em;
             text-align: center;
         }
+
         div.footer.logo {
             right: 1em;
             margin-right: 15px;
@@ -138,7 +140,7 @@
                     <li>Take 25-year-old code</li>
                     <li>Port to modern C++17</li>
                     <li class="fragment">Incrementally!</li>
-                    <li class="fragment">Why so important?</li>
+                    <li class="fragment">WHY!??</li>
                 </ul>
             </section>
         </section>
@@ -1036,7 +1038,7 @@ SECTION("capitalize") {
   CHECK(capitalize("a MonkeY") == "A monkey"s);
 }
                 </code></pre>
-                <h5 class="fragment">ZOMBIES</h5>
+                <div class="fragment"><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" height="120px"></div>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1061,7 +1063,7 @@ SECTION("capitalize") {
                         <li>Simple scenarios, simple solutions</li>
                     </ul>
                 </aside>
-                <h5>ZOMBIES</h5>
+                <div><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" height="120px"></div>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1078,7 +1080,7 @@ std::string capitalize(const char *str) {
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
-                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|7|8|9-11|13" class="cpp">
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="|2,3|7|8|9-11|13" class="cpp">
 std::string capitalize(const char *str) {
   if (!*str)
     return "";
@@ -1097,9 +1099,32 @@ std::string capitalize(const char *str) {
                 </code></pre>
                 <!-- https://godbolt.org/z/Eb3MdTae4 -->
             </section>
-            <section data-auto-animate>
+            <section>
                 <h2>String manipulation</h2>
                 <h5>Enter <code>string_view</code> and ranges v3</h5>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <h5>ranges</h5>
+                <div><code>range</code> &equiv; <code>[begin, end)</code></div>
+                <div class="fragment"><code>end</code> can be a sentinel</div>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <h5>ranges</h5>
+                <div><code>std::some_algo(begin(container), end(container));</code>
+                    <br>&rarr;
+                    <br><code>ranges::some_algo(container);</code></div>
+            </section>
+            <section>
+                <h2>String manipulation</h2>
+                <h5>ranges</h5>
+                <ul>
+                    <li>Lazy evaluation with <code>ranges::view</code> (<code>transform</code>, <code>concat</code>,
+                        etc)
+                    </li>
+                    <li>Composable with <code>operator |</code></li>
+                </ul>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1116,6 +1141,27 @@ auto capitalize(std::string_view text) {
     | ranges::to&lt;std::string&gt;;
 }
                 </code></pre>
+            </section>
+            <section data-auto-animate>
+                <h2>String manipulation</h2>
+                <pre data-id="code"><code data-trim data-noescape data-line-numbers="" class="cpp">
+auto capitalize(std::string_view text) {
+  return text
+    | ranges::view::enumerate
+    | ranges::view::transform(
+        [](const auto &pair) -> char {
+          return pair.first == 0 ? std::toupper(pair.second)
+                                 : std::tolower(pair.second);
+        }
+      )
+    | ranges::to&lt;std::string&gt;;
+}
+                </code></pre>
+                <pre><code data-trim data-noescape>
+                std::string_view("hi!") &rarr;
+                range&lt;tuple&lt;int, char>>((0, 'h'), (1, 'i'), (2, '!')) &rarr;
+                range&lt;char>('H', 'i', '!') &rarr;
+                std::string("Hi!")</code></pre>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1169,7 +1215,7 @@ bool matches_inside(std::string_view needle, std::string_view haystack) {
         <section>
             <!-- proto range goodness -->
             <section>
-                <h2>Other Ranges Stuff</h2>
+                <h2>More fun with ranges</h2>
             </section>
             <section>
                 <h2>String formatting &amp; Ranges</h2>
@@ -1235,23 +1281,26 @@ ch->send_line(
         </section>
 
         <section>
-            <!--- TODO probably more in the techniques for adapting old code to new -->
+            <section>
+                <h2>Other tricks</h2>
+            </section>
             <section>
                 <h2>Parsing</h2>
                 <div>
-                    <pre><code data-noescape data-trim data-line-numbers class="cpp">
-                    typedef void DO_FUN(Char *ch, char *argument);
+                    <pre><code data-noescape data-trim data-line-numbers="|1,3-4|7-9|10-12|14" class="cpp">
+                    typedef void DO_FUN(Char *ch, const char *argument);
 
-                    void parse(Char *ch, char *line) {
+                    void init_commands() { /* populates some kind of map */ }
+                    DO_FUN *find_command(const char *) { /* looks up in map */ }
+
+                    void parse(Char *ch, const char *line) {
                       char command[MAX_LINE_LENGTH];
                       char *remainder = one_argument(line, command);
                       DO_FUN *func = find_command(command);
-
                       if (!func) {
                         send_to_char(ch, "Huh?\n");
                         return;
                       }
-
                       (*func)(ch, remainder);
                     }
                     </code></pre>
@@ -1265,7 +1314,7 @@ void do_save(Char *ch, const char *args);
 void do_say(Char *ch, const char *args);
 void do_score(Char *ch, const char *args);
 void do_sell(Char *ch, const char *arg);
-void do_set(Char *ch, char *arg);
+void do_set(Char *ch, const char *args);
 // ...a few hundred more...
                     </code></pre>
                 </div>
@@ -1302,16 +1351,16 @@ void do_set(Char *ch, const char *arg); // TODO(#55) update this!
             </section>
             <section data-auto-animate>
                 <h2>Parsing</h2>
-                <div><pre data-id="code"><code data-line-numbers="|1|4|8,9" data-noescape data-trim class="cpp">
-typedef void (*do_func)(Char *ch, char *argument);
-
-// Adds a function for "command" to the command map.
-void add_command(const char *command, do_func func);
+                <div><pre data-id="code"><code data-line-numbers="|1|3|5-9" data-noescape data-trim class="cpp">
+void add_command(const char *command, DO_FUN *func);
 
 void init_commands() {
   // ...
   add_command("save", do_save);
   add_command("say", do_say);
+  add_command("'", do_say);
+  add_command("score", do_score);
+  add_command("sell", do_sell);
   // ... and so on
 }
                     </code></pre>
@@ -1345,7 +1394,13 @@ void add_command(
                 <h2>But wait there's more...</h2>
             </section>
             <section>
-                Strong types, bit fields
+                <h2>Not covered here</h2>
+                <ul>
+                    <li>Strong types &amp; <code>enum</code>s</li>
+                    <li>Bit field enums</li>
+                    <li><code>std::optional</code></li>
+                    <li><code>std::variant</code></li>
+                </ul>
             </section>
             <section>
                 <h3>Regrets</h3>
@@ -1362,6 +1417,29 @@ void add_command(
                 <h3>Conclusion</h3>
             </section>
             <section>
+                <h2>Conclusion</h2>
+                <table>
+                    <tr>
+                        <th>Language</th>
+                        <th>Files</th>
+                        <th>Comments</th>
+                        <th>Lines of Code</th>
+                    </tr>
+                    <tr>
+                        <td>C++</td>
+                        <td>151</td>
+                        <td>3839</td>
+                        <td>42117 (down from 50k)</td>
+                    </tr>
+                    <tr>
+                        <td>CMake</td>
+                        <td>10</td>
+                        <td>0</td>
+                        <td>93</td>
+                    </tr>
+                </table>
+            </section>
+            <section>
                 <h3>What helped</h3>
                 <ul>
                     <li>Compiler warnings</li>
@@ -1376,6 +1454,15 @@ void add_command(
                         <li>not so important for some never-used code like xania, but</li>
                     </ul>
                 </aside>
+            </section>
+            <section>
+                <h3>Benefits of modernising your code</h3>
+                <ul>
+                    <li>Easier to find and fix bugs</li>
+                    <li>More understandable code</li>
+                    <li>Keeps coders happy</li>
+                    <li class="fragment">Incrementally keeps management happy!</li>
+                </ul>
             </section>
             <section>
                 <h3>Conclusion</h3>
