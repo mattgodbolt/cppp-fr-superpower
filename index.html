@@ -79,7 +79,7 @@
             position: fixed;
             bottom: 0;
             left: 0;
-            max-width: 10em;
+            max-width: 12em;
             border: 1px solid #0d99a5;
             box-shadow: 10px 10px 5px 3px rgba(0, 0, 0, 0.4);
             border-radius: 20px;
@@ -108,6 +108,10 @@
             margin-right: 15px;
             height: 6em;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -116,6 +120,8 @@
     <div class="slides">
         <section>
             <!-- INTRO -->
+            <section class="hide-footer" data-background="images/title.png">
+            </section>
             <section class="hide-footer">
                 <h2>C++'s Superpower</h2>
                 <h4>Matt Godbolt &mdash; <a href="https://twitter.com/mattgodbolt">@mattgodbolt</a></h4>
@@ -499,7 +505,7 @@ struct AREA_DATA {
                 struct AREA_DATA {
                   AREA_DATA *next;
                   std::string name;
-                  // ...
+                  // other members...
                 };
 
                 void report_area(AREA_DATA *pArea) {
@@ -1064,7 +1070,8 @@ SECTION("capitalize") {
   CHECK(capitalize("a MonkeY") == "A monkey"s);
 }
                 </code></pre>
-                <div class="fragment"><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" height="120px"></div>
+                <div class="fragment"><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" alt="Zombies"
+                                                           height="200px"></div>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1073,12 +1080,13 @@ SECTION("capitalize") {
   CHECK(capitalize("") == ""s);                  // Zero, Boundaries
   CHECK(capitalize("a") == "A"s);                // One
   CHECK(capitalize("A") == "A"s);
-  CHECK(capitalize("a monkey") == "A monkey"s);  // Many, Interface
+  CHECK(capitalize("a monkey") == "A monkey"s);  // Many
   CHECK(capitalize("A MONKEY") == "A monkey"s);
-  CHECK(capitalize("a MonkeY") == "A monkey"s);  // Exceptional
+  CHECK(capitalize("a MonkeY") == "A monkey"s);
 }
                 </code></pre>
                 <aside class="notes">
+                    <h3>James Grenning</h3>
                     <ul>
                         <li>Zero</li>
                         <li>One</li>
@@ -1089,7 +1097,9 @@ SECTION("capitalize") {
                         <li>Simple scenarios, simple solutions</li>
                     </ul>
                 </aside>
-                <div><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" height="120px"></div>
+                <div><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" alt="Zombies" style="float:right;"
+                                          height="100px"></div>
+                <div class="shoutout">Victor Ciura will be talking about exceptions later today</div>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1534,7 +1544,7 @@ void add_command(
 
         </section>
     </div>
-    <div class="footer logo">
+    <div id="footer" class="footer logo hidden">
         <img src="images/cpp-man.png" alt="C++ Superman">
     </div>
 </div>
@@ -1547,10 +1557,17 @@ void add_command(
     Reveal.initialize({
         width: 1200,
         height: 700,
+        margin: 0.1,
+        maxScale: 10,
         hash: true,
+        transition: 'fade',
         controls: false,
         slideNumber: true,
         plugins: [RevealMarkdown, RevealHighlight, RevealNotes]
+    });
+
+    Reveal.on('slidechanged', event => {
+        document.getElementById("footer").classList.toggle("hidden", event.currentSlide.classList.contains("hide-footer"));
     });
 </script>
 </body>
