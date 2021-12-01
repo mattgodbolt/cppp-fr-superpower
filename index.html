@@ -1434,14 +1434,15 @@ ch->send_line(
                 <a href="https://virtual.bbcmic.ro">virtual.bbcmic.ro</a>
                 <h3><code>}</code></h3>
             </section>
+        </section>
 
+        <section>
             <section>
-                <section>
-                    <h2>Other tricks</h2>
-                </section>
-                <section>
-                    <h2>Parsing</h2>
-                    <div>
+                <h2>Other tricks</h2>
+            </section>
+            <section>
+                <h2>Parsing</h2>
+                <div>
                     <pre><code data-noescape data-trim data-line-numbers="|1,3-4|7-9|10-12|14" class="cpp">
                     typedef void DO_FUN(Char *ch, const char *argument);
 
@@ -1459,11 +1460,11 @@ ch->send_line(
                       (*func)(ch, remainder);
                     }
                     </code></pre>
-                    </div>
-                </section>
-                <section data-auto-animate>
-                    <h2>Parsing</h2>
-                    <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
 // ...
 void do_save(Char *ch, const char *args);
 void do_say(Char *ch, const char *args);
@@ -1472,11 +1473,11 @@ void do_sell(Char *ch, const char *arg);
 void do_set(Char *ch, const char *args);
 // ...a few hundred more...
                     </code></pre>
-                    </div>
-                </section>
-                <section data-auto-animate>
-                    <h2>Parsing</h2>
-                    <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                <div><pre data-id="code"><code data-noescape data-trim data-line-numbers class="cpp">
 // ...
 void do_save(Char *ch);                 // no args!
 void do_say(Char *ch, ArgParser args);  // takes a parser obj
@@ -1485,11 +1486,11 @@ void do_sell(Char *ch, ArgParser args); // takes a parser obj
 void do_set(Char *ch, const char *arg); // TODO(#55) update this!
 // ...a few hundred more...
                 </code></pre>
-                    </div>
-                </section>
-                <section>
-                    <h2>Parsing</h2>
-                    <pre><code data-noescape data-trim class="cpp">
+                </div>
+            </section>
+            <section>
+                <h2>Parsing</h2>
+                <pre><code data-noescape data-trim class="cpp">
                 class ArgParser {
                 public:
                   explicit ArgParser(std::string args);
@@ -1503,10 +1504,10 @@ void do_set(Char *ch, const char *arg); // TODO(#55) update this!
                   const char *c_str() const;
                 };
                 </code></pre>
-                </section>
-                <section data-auto-animate>
-                    <h2>Parsing</h2>
-                    <div><pre data-id="code"><code data-line-numbers="|1|3|5-9" data-noescape data-trim class="cpp">
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                <div><pre data-id="code"><code data-line-numbers="|1|3|5-9" data-noescape data-trim class="cpp">
 void add_command(const char *command, DO_FUN *func);
 
 void init_commands() {
@@ -1519,12 +1520,12 @@ void init_commands() {
   // ... and so on
 }
                     </code></pre>
-                    </div>
-                </section>
-                <section data-auto-animate>
-                    <h2>Parsing</h2>
-                    <div><pre data-id="code"><code data-line-numbers="|1|4|7,8|9-14" data-noescape data-trim
-                                                   class="cpp">
+                </div>
+            </section>
+            <section data-auto-animate>
+                <h2>Parsing</h2>
+                <div><pre data-id="code"><code data-line-numbers="|1|4|7,8|9-14" data-noescape data-trim
+                                               class="cpp">
 using Handler = std::function&lt;void (Char *, ArgParser args)&gt;;
 
 // New-style commands, taking a std::function handler.
@@ -1541,9 +1542,9 @@ void add_command(
     });
 }
                 </code></pre>
-                    </div>
-                </section>
+                </div>
             </section>
+        </section>
 
         </section>
     </div>
