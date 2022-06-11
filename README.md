@@ -1,3 +1,3 @@
 ## C++'s Superpower!
 
-Presented as a keynote at [cppp.fr](https://cppp.fr/).
+First presented as a keynote at [cppp.fr](https://cppp.fr/). And then at the Chicago C++ Meetup.

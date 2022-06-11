@@ -121,7 +121,10 @@
     <div class="slides">
         <section>
             <!-- INTRO -->
-            <section class="hide-footer" data-background="images/title.png">
+            <section class="hide-footer">
+                <h1>C++'s Superpower</h1>
+                <h3><a href="https://twitter.com/mattgodbolt/">@mattgodbolt</a></h3>
+                <h5>Chicago C/C++ Users Group<br/>June 2022</h5>
             </section>
             <section class="hide-footer">
                 <h2>C++'s Superpower</h2>
@@ -137,9 +140,6 @@
                     <li>Multi-paradigm</li>
                     <li>Clear object lifetime</li>
                 </ul>
-                <div class="fragment shoutout">
-                    <div>Pavel Novikov will be talking about constructors/destructors tomorrow</div>
-                </div>
             </section>
             <section>
                 <h2>Surely not?</h2>
@@ -157,7 +157,7 @@
                 <h2>The goal</h2>
                 <ul>
                     <li>Take 25-year-old code</li>
-                    <li>Port to modern C++17</li>
+                    <li>Port to "modern" C++17</li>
                     <li class="fragment">Incrementally!</li>
                     <li class="fragment">WHY!??</li>
                 </ul>
@@ -318,9 +318,6 @@ above you and wonder why anyone would wish to fight in this fair city.
                         <img src="images/conan_frogarian.png" height="50px" alt="conan" class="conan"></li>
                     <li class="fragment">Run &amp; test!</li>
                 </ul>
-                <div class="fragment shoutout">
-                    <div>Julien Jomier will be talking about CMake later today</div>
-                </div>
             </section>
             <section>
                 <h2>Demo!</h2>
@@ -452,14 +449,6 @@ struct AREA_DATA {
                     </code></pre>
                 </div>
             </section>
-            <section>
-                <h2>Changing an element</h2>
-                <ul>
-                    <li>Build</li>
-                    <li>Run</li>
-                    <li>Manual test</li>
-                </ul>
-            </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
                 <div><pre data-id="code"><code data-trim data-noescape data-line-numbers class="cpp">
@@ -542,14 +531,14 @@ warning: format '%s' expects argument of type 'char*',
             <section data-auto-animate>
                 <h2>Changing an element</h2>
                 <pre data-id="code2"><code class="cpp" data-trim data-noescape data-line-numbers>
- /* Adds a line of text to the buffer, formatted. */
+/* Adds a line of text to the buffer, formatted. */
 void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </code></pre>
             </section>
             <section data-auto-animate>
                 <h2>Changing an element</h2>
                 <pre data-id="code2"><code class="cpp" data-trim data-noescape data-line-numbers>
- /* Adds a line of text to the buffer, formatted. */
+/* Adds a line of text to the buffer, formatted. */
 [[gnu::format(printf, 2, 3)]]
 void buffer_addline_fmt(BUFFER *buffer, const char *text, ...);
             </code></pre>
@@ -742,9 +731,6 @@ struct AREA_DATA {
 // TODO(#48): try and remove need for pointer stability.
 std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas;
                     </code></pre>
-                <div class="fragment shoutout">
-                    <div>Sébastien Gonzalve will talk about moving legacy code to smart pointers on Friday</div>
-                </div>
             </section>
             <section>
                 <h2>Class-i-fy</h2>
@@ -758,9 +744,6 @@ std::vector&lt;std::unique_ptr&lt;AREA_DATA&gt;&gt; areas;
                         </ul>
                     </li>
                 </ul>
-                <div class="fragment shoutout">
-                    <div>Serge Guelton talks about using C++ as C on steroids on Friday</div>
-                </div>
             </section>
             <section data-auto-animate>
                 <h2>Class-i-fy</h2>
@@ -1068,7 +1051,6 @@ SECTION("capitalize") {
                 </code></pre>
                 <div class="fragment"><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" alt="Zombies"
                                                            height="200px"></div>
-                <div class="shoutout">Phil Nash will be talking about testing later today</div>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1096,7 +1078,6 @@ SECTION("capitalize") {
                 </aside>
                 <div><h5>ZOMBIES</h5><img src="images/PVZ_Zombie_Suit.png" alt="Zombies" style="float:right;"
                                           height="100px"></div>
-                <div class="shoutout">Victor Ciura will be talking about exceptions later today</div>
             </section>
             <section data-auto-animate>
                 <h2>String manipulation</h2>
@@ -1135,9 +1116,6 @@ std::string capitalize(const char *str) {
             <section>
                 <h2>String manipulation</h2>
                 <h5>Enter <code>string_view</code> and ranges v3</h5>
-                <div class="fragment shoutout">
-                    <div>See Barry Revzin's Keynote tomorrow</div>
-                </div>
             </section>
             <section>
                 <h2>String manipulation</h2>
@@ -1430,8 +1408,6 @@ ch->send_line(
             <section>
                 <h3><code>~Talk() {</code></h3>
                 <h2>Thank you!</h2>
-                <h5>Happy 40th Birthday BBC Micro</h5>
-                <a href="https://virtual.bbcmic.ro">virtual.bbcmic.ro</a>
                 <h3><code>}</code></h3>
             </section>
         </section>
